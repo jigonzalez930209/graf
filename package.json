@@ -15,8 +15,6 @@
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.8",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "@tauri-apps/api": "^1.2.0",
     "@types/d3-time-format": "^4.0.0",
     "@types/node": "^18.11.10",
@@ -28,23 +26,26 @@
     "echarts": "^5.4.0",
     "file-saver": "^2.0.5",
     "lodash": "^4.17.21",
+    "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
+    "react-dom": "^18.2.0",
+    "react-export-excel": "^0.5.3",
+    "react-export-excel-xlsx-fix": "^0.5.3",
     "react-scripts": "4.0.3",
     "react-spinners": "^0.13.5",
     "react-use-measure": "^2.0.4",
     "styled-components": "^5.3.3",
     "typescript": "^4.9.3",
-    "usehooks-ts": "^2.7.2",
-    "react-export-excel": "^0.5.3",
-    "react-export-excel-xlsx-fix": "^0.5.3"
+    "usehooks-ts": "^2.7.2"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^1.2.2",
+    "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.10",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
     "@vitejs/plugin-react": "^3.0.0",
     "typescript": "^4.9.3",
-    "vite": "^4.0.0",
-    "@tauri-apps/cli": "^1.2.2"
+    "vite": "^4.0.0"
   }
 }

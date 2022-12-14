@@ -122,7 +122,7 @@ const useCharOptions = ({ type, title }: useCharOptionsProps) => {
         {
           datasetIndex: file.id,
           name: file.name,
-          type: 'line',
+          // type: '',
           silent: true,
           symbolSize: 'line' ? 3 : 5,
           animation: false,
