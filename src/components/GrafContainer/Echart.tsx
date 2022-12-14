@@ -22,7 +22,7 @@ export const ReactECharts: React.FC<ReactEChartsProps> = ({
 }): JSX.Element => {
   const chartRef = React.useRef<HTMLDivElement>(null);
 
-  const { options: option } = useCharOptions({ type: "VC_V_vs_I", title });
+  const { options: option } = useCharOptions({ type: "IMPEDANCE_ZiZr", title });
 
   React.useEffect(() => {
     // Initialize chart
@@ -38,16 +38,18 @@ export const ReactECharts: React.FC<ReactEChartsProps> = ({
 
     // Return cleanup function
     return () => {
-      chart?.dispose();
+      chart.dispose();
       window.removeEventListener("resize", resizeChart);
     };
   }, [theme]);
 
   React.useEffect(() => {
     // Update chart
+    // console.log(chartRef);
     if (chartRef.current !== null) {
       const chart = getInstanceByDom(chartRef.current);
-      chart?.setOption(option, settings);
+      chart.clear();
+      chart.setOption(option, settings);
     }
   }, [option, settings, theme]);
 
@@ -56,7 +58,7 @@ export const ReactECharts: React.FC<ReactEChartsProps> = ({
     if (chartRef.current !== null) {
       const chart = getInstanceByDom(chartRef.current);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      loading === true ? chart?.showLoading() : chart?.hideLoading();
+      loading === true ? chart.showLoading() : chart.hideLoading();
     }
   }, [loading, theme]);
 

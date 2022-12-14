@@ -29,8 +29,8 @@ const useCharOptions = ({ type, title }: useCharOptionsProps) => {
       }
     },
     dataset: [
-      ...impedance?.map(file => ({
-        id: file.id,
+      ...impedance?.map((file, i) => ({
+        id: i,
         name: file.name,
         source: file.content,
       })),
@@ -118,9 +118,9 @@ const useCharOptions = ({ type, title }: useCharOptionsProps) => {
     // }
     // ,
     series:
-      impedance?.map(file => (
+      impedance?.map((file, i) => (
         {
-          datasetIndex: file.id,
+          datasetIndex: i,
           name: file.name,
           type: graftType,
           silent: true,
