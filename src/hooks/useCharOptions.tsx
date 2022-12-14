@@ -122,9 +122,9 @@ const useCharOptions = ({ type, title }: useCharOptionsProps) => {
         {
           datasetIndex: file.id,
           name: file.name,
-          // type: '',
+          type: graftType,
           silent: true,
-          symbolSize: 'line' ? 3 : 5,
+          symbolSize: graftType === 'line' ? 0.1 : 5,
           animation: false,
           progressive: 0,  // Important for performance
           smooth: true,
