@@ -206,8 +206,8 @@ const COLUMNS_IMPEDANCE = [
   'Frequency',
   'Module',
   'Fase',
+  'ZR',
   'ZI',
-  'ZR'
 ]
 
 export {
