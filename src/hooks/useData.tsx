@@ -119,12 +119,12 @@ export const useData = () => {
 
   const calculateColumn = (key: string, value: string[]) => {
     const calculate = {
-      Time: parseFloat(value[0]).toFixed(3),
-      Frequency: parseFloat(value[1]).toFixed(3),
-      Module: parseFloat(value[2]).toFixed(3),
-      Fase: parseFloat(value[3]).toFixed(3),
-      ZI: (-parseFloat(value[2]) * Math.sin(parseFloat(value[3]) * Math.PI / 180)).toFixed(3),
-      ZR: (parseFloat(value[2]) * Math.cos(parseFloat(value[3]) * Math.PI / 180)).toFixed(3),
+      Time: parseFloat(value[0]),
+      Frequency: parseFloat(value[1]),
+      Module: parseFloat(value[2]),
+      Fase: parseFloat(value[3]),
+      ZR: parseFloat(value[2]) * Math.cos(parseFloat(value[3]) * Math.PI / 180),
+      ZI: -parseFloat(value[2]) * Math.sin(parseFloat(value[3]) * Math.PI / 180),
       name: ''
     }
 
@@ -133,10 +133,10 @@ export const useData = () => {
 
   const exportImpedanceDataToExcel = (columns: string[]) => {
     if (columns.length > 0) {
-      return data?.filter(f => f.selected).map(file => {
+      return data?.filter(f => f.selected).map((file, i) => {
         return {
           name: file.name,
-          value: file.content.map(c => columns.reduce((acc, curr) => ({ ...acc, [curr]: calculateColumn(curr, c) }), {})),
+          value: file.content.map(c => columns.reduce((acc, curr) => ({ ...acc, [`${curr}${i + 1}`]: calculateColumn(curr, c) }), {})),
         }
       })
     }
