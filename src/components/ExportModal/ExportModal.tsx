@@ -129,7 +129,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
     COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
   );
 
-  const [isSameSheet, setIsSameSheet] = React.useState(false)
+  const [isSameSheet, setIsSameSheet] = React.useState(true)
   const [filename, setFilename] = React.useState(Date.now().toString())
 
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => setIsSameSheet(event.target.checked)
@@ -140,7 +140,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
     });
   };
 
-  const error = !Object.values(state).find(c => c === true) || filename === '' || !Boolean(filename.match(/^[a-z0-9]{5,}/))
+  const error = !Object.values(state).find(c => c === true) || filename === '' || !Boolean(filename.match(/^[]{4,}/))
 
   const handleClose = () => {
     onClose();
@@ -191,15 +191,12 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
           <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
             <FormLabel component="legend">File Name</FormLabel>
             <FormGroup>
-              <TextField sx={{ width: '100%' }} value={filename} error={!Boolean(filename.match(/^[a-z0-9]{5,}/))} onChange={e => setFilename(e.target.value)} name="filename" />
+              <TextField sx={{ width: '100%' }} value={filename} error={!Boolean(filename.length > 4)} onChange={e => setFilename(e.target.value)} name="filename" />
             </FormGroup>
           </FormControl>
         </DialogContent>
         <DialogActions sx={{ height: '3.5rem' }}>
           <ExcelFileExport filename={filename} isSameSheet={isSameSheet} columns={Object.entries(state).filter(([k, v], _) => v === true).map(([k, v]) => k)} >
-            <Button autoFocus disabled={error} onClick={handleSubmit} sx={{ background: error && '#fe4a49' }}>
-              Export
-            </Button>
           </ExcelFileExport>
         </DialogActions>
       </BootstrapDialog>
