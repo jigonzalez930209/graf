@@ -26,7 +26,11 @@ const ExcelFileExport = ({ columns, isSameSheet, filename }: ExcelFileExportProp
               data:
                 [
                   ...data[0].value.map((_, i) => ({
-                    ...data.reduce((acc, curr) => ({ ...acc, [curr.name]: '', ...curr.value[i] }), {})
+                    ...data.reduce((acc, curr) => ({
+                      ...acc,
+                      [`${curr.name} (${i + 1})`]: '',
+                      ...curr.value[i]
+                    }), {})
                   }))
                 ]
             }}

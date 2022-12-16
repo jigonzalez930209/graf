@@ -136,7 +136,7 @@ export const useData = () => {
       return data?.filter(f => f.selected).map((file, i) => {
         return {
           name: file.name,
-          value: file.content.map(c => columns.reduce((acc, curr) => ({ ...acc, [`${curr}${i + 1}`]: calculateColumn(curr, c) }), {})),
+          value: file.content.map(c => columns.reduce((acc, curr) => ({ ...acc, [`${curr} (${i + 1})`]: calculateColumn(curr, c) }), {})),
         }
       })
     }
