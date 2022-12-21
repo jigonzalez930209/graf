@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import useLocalStorage from './useLocalStorage'
 import { GrafContext } from '../context/GraftContext'
+import { IStepBetweenPoints } from '../interfaces/interfaces'
 
 export type File = {
   id: number
@@ -68,7 +69,7 @@ export const useData = () => {
       return [];
     }
 
-    return data.map(file => ({ ...file, content: _.dropRight(file.content) })).filter(file => file.selected).map((file) => (
+    return data.filter(file => file.selected).map((file) => (
       {
         ...file,
         content: file.content.map((c) => {
@@ -83,38 +84,23 @@ export const useData = () => {
     if (data === null) {
       return null;
     }
-    let minY, minX = 500000000
-    let maxY, maxX = -500000000
-    const impedanceCorrectionData = data.map(file => ({ ...file, content: _.dropRight(file.content) }))
-    const impedanceData = impedanceCorrectionData.filter(file => file.selected).map((file) => (
-      {
-        ...file,
-        content: file.content.map((c, i) => {
-          const module = parseFloat(c[2])
-          const fase = -parseFloat(c[3])
-          const x = file.pointNumber - i // parseFloat(c[1])
-          minX = _.min([x, minX])
-          maxX = _.max([x, maxX])
-          minY = _.min([_.min([module, fase]), minY])
-          maxY = _.max([_.max([module, fase]), maxY])
-          return {
-            module: {
-              x,
-              y: module
-            },
-            fase: {
-              x,
-              y: fase
-            }
+    const impedanceData = data.filter(file => file.selected).map((file) => ({
+      ...file,
+      content: file.content.map((c, i) => (
+        {
+          module: {
+            x: Math.log10(parseFloat(c[1])),
+            y: parseFloat(c[2])
+          },
+          fase: {
+            x: Math.log10(parseFloat(c[1])),
+            y: -parseFloat(c[3])
           }
-        })
-      }))
+        }
+      ))
+    }))
 
-    return {
-      yExtremes: [minY + minY * .1, maxY + maxY * .1],
-      xExtremes: [minX + minX * .1, maxX + maxX * .1],
-      data: impedanceData,
-    }
+    return impedanceData
   }
 
   const calculateColumn = (key: string, value: string[]) => {
@@ -147,15 +133,37 @@ export const useData = () => {
 
   const cleanData = () => setData(null)
 
-  const getVCData = ({ eliminateInnerPoints }: { eliminateInnerPoints: number }) => {
+  const getVCData = (stepBetweens: IStepBetweenPoints) => {
     if (data === null) {
       return [];
     }
     return data.map(file => ({ ...file, content: _.dropRight(file.content) })).filter(file => file.selected).map((file) => (
       {
         ...file,
-        content: file.content.filter((c, i) => i % eliminateInnerPoints === 0).map((c) => [c[0], c[1]])
+        content: file.content.filter((c, i) => i % stepBetweens === 0).map((c) => [c[0], c[1]])
       }))
+  }
+
+  const getZIZRvsFrequency = () => {
+    if (data === null) {
+      return [];
+    }
+    return data.filter(file => file.selected).map((file) => ({
+      ...file,
+      content: file.content.map((c, i) => (
+        {
+          Zi: {
+            x: Math.log10(parseFloat(c[1])),
+            y: -parseFloat(c[2]) * Math.sin(parseFloat(c[3]) * Math.PI / 180)
+          },
+          Zr: {
+            x: Math.log10(parseFloat(c[1])),
+            y: parseFloat(c[2]) * Math.cos(parseFloat(c[3]) * Math.PI / 180)
+          }
+        }
+      ))
+    }))
+
   }
 
   return {
@@ -166,6 +174,7 @@ export const useData = () => {
     getImpedanceData,
     getModuleFase,
     exportImpedanceDataToExcel,
-    getVCData
+    getVCData,
+    getZIZRvsFrequency
   };
 };

@@ -4,6 +4,7 @@ import {
   IFileType,
   IGrafType,
   IGraftImpedanceType,
+  IStepBetweenPoints,
 } from "../interfaces/interfaces";
 
 type GraftAction = {
@@ -12,13 +13,15 @@ type GraftAction = {
     | "setFileType"
     | "setLoading"
     | "setGraftType"
-    | "setImpedanceType";
+    | "setImpedanceType"
+    | "setStepBetweenPoints";
   payload:
     | INotification
     | IFileType
     | boolean
     | IGrafType
-    | IGraftImpedanceType;
+    | IGraftImpedanceType
+    | IStepBetweenPoints;
 };
 
 export const graftReducer = (
@@ -51,7 +54,11 @@ export const graftReducer = (
         ...state,
         impedanceType: action.payload as IGraftImpedanceType,
       };
-
+    case "setStepBetweenPoints":
+      return {
+        ...state,
+        stepBetweenPoints: action.payload as IStepBetweenPoints,
+      };
     default:
       return state;
   }

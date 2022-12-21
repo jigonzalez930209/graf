@@ -9,6 +9,7 @@ export type GrafContextProps = {
   setLoading: (loading: boolean) => void;
   setGraftType: (type: IGrafType) => void;
   setImpedanceType: (type: IGraftImpedanceType) => void;
+  setStepBetweenPoints: (step: number) => void;
 }
 
 
