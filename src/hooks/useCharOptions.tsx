@@ -14,7 +14,7 @@ const useCharOptions = ({ type, title }: useCharOptionsProps) => {
   const { getImpedanceData, getModuleFase, getVCData } = useData()
   const { graftState: { loading, graftType, fileType } } = React.useContext(GrafContext)
 
-  const impedance = fileType === 'teq4' ? getVCData({ eliminateInnerPoints: 10 }) : getImpedanceData()
+  const impedance = fileType === 'teq4' ? getVCData(10) : getImpedanceData()
 
   const data = React.useMemo(() => {
 
