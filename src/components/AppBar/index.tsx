@@ -80,7 +80,6 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
         </Box>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
-        <Toolbar />
         {content}
       </Box>
     </Box>
