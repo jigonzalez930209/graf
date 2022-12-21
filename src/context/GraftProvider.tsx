@@ -1,9 +1,8 @@
 import * as React from 'react';
 
 import { GrafContext } from './GraftContext';
-import { IGraftState, INotification, IFileType, IGrafType, IGraftImpedanceType } from '../interfaces/interfaces';
+import { IGraftState, INotification, IFileType, IGrafType, IGraftImpedanceType, IStepBetweenPoints } from '../interfaces/interfaces';
 import { graftReducer } from './graftReducer';
-import { useData } from '../hooks/useData';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 const INITIAL_STATE: IGraftState = {
@@ -16,7 +15,8 @@ const INITIAL_STATE: IGraftState = {
   fileType: null,
   loading: false,
   graftType: 'scatter',
-  impedanceType: 'Bode'
+  impedanceType: 'Nyquist',
+  stepBetweenPoints: 30
 }
 
 interface props {
@@ -40,6 +40,8 @@ export const GraftProvider = ({ children }: props) => {
 
   const setImpedanceType = (type: IGraftImpedanceType) => dispatch({ type: 'setImpedanceType', payload: type })
 
+  const setStepBetweenPoints = (step: IStepBetweenPoints) => dispatch({ type: 'setStepBetweenPoints', payload: step })
+
   React.useEffect(() => {
     if (data?.find(file => file.selected)?.type) {
       setSelectedFile(data.find(file => file.selected).type)
@@ -53,7 +55,8 @@ export const GraftProvider = ({ children }: props) => {
       setSelectedFile,
       setLoading,
       setGraftType,
-      setImpedanceType
+      setImpedanceType,
+      setStepBetweenPoints
     }}>
       {children}
     </GrafContext.Provider>
