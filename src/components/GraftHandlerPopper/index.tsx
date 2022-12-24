@@ -98,7 +98,7 @@ const GraftHandlerPopper = () => {
             }
             {fileType === 'teq4' && (<Grid xs={6} item>
               <FormControl variant="filled" sx={{ m: 1, minWidth: 200, maxHeight: 20 }}>
-                <Box sx={{ maxWidth: 200 }}>
+                <Box sx={{ maxWidth: 180 }}>
                   <Typography id="input-slider" gutterBottom>
                     Steps between points
                   </Typography>
