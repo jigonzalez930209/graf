@@ -239,7 +239,6 @@ const usePlotlyOptions = () => {
 
 
       } else if (fileType === 'teq4') {
-
         setData(getVCData(stepBetweenPoints).map(((d, i) => ({
           x: d.content.map(j => j[0]),
           y: d.content.map(j => j[1]),
@@ -256,6 +255,7 @@ const usePlotlyOptions = () => {
           },
           color: COLORS[i]
         }))))
+
         setLayout({
           autosize: false,
           width: width * 0.7,
@@ -277,7 +277,7 @@ const usePlotlyOptions = () => {
           },
           xaxis: {
             title: {
-              text: 'ZR',
+              text: 'Voltage (mV)',
               font: {
                 size: 18,
                 color: '#7f7f7f'
@@ -286,7 +286,7 @@ const usePlotlyOptions = () => {
           },
           yaxis: {
             title: {
-              text: 'ZI',
+              text: 'Current (mA)',
               font: {
                 size: 18,
                 color: '#7f7f7f'
