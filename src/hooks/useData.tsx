@@ -31,6 +31,19 @@ export type ProcessFile = {
   pointNumber: number
   content: string[][]
   selected: boolean
+  impedance?: {
+    V: number
+    signalAmplitude: number
+    sFrequency: number
+    eFrequency: number
+    totalPoints: number
+  }
+  voltammeter?: {
+    samplesSec: number
+    range: number
+    totalTime: number
+    cicles: number
+  }
 }
 
 export type Files = {
@@ -42,7 +55,6 @@ export const useData = () => {
 
   const [data, setData] = useLocalStorage<ProcessFile[]>('files', null)
   const { graftState: { fileType }, setSelectedFile } = React.useContext(GrafContext)
-
 
   const updateData = (payload: ProcessFile[]) => {
     if (payload?.length > 0) {
@@ -72,11 +84,11 @@ export const useData = () => {
     return data.filter(file => file.selected).map((file) => (
       {
         ...file,
-        content: file.content.map((c) => {
-          const y = -parseFloat(c[2]) * Math.sin(parseFloat(c[3]) * Math.PI / 180)
-          const x = parseFloat(c[2]) * Math.cos(parseFloat(c[3]) * Math.PI / 180)
-          return [x, y]
-        })
+        content: file.content.map((c) => ([
+          parseFloat(c[2]) * Math.cos(parseFloat(c[3]) * Math.PI / 180),
+          -parseFloat(c[2]) * Math.sin(parseFloat(c[3]) * Math.PI / 180)
+        ])
+        )
       }))
   }
 
@@ -103,15 +115,17 @@ export const useData = () => {
     return impedanceData
   }
 
-  const calculateColumn = (key: string, value: string[]) => {
+  const calculateColumn = (key: string, value: string[], isImpedance: boolean = true) => {
     const calculate = {
-      Time: parseFloat(value[0]),
+      Time: isImpedance ? parseFloat(value[0]) : value[2],
       Frequency: parseFloat(value[1]),
       Module: parseFloat(value[2]),
       Fase: parseFloat(value[3]),
       ZR: parseFloat(value[2]) * Math.cos(parseFloat(value[3]) * Math.PI / 180),
       ZI: -parseFloat(value[2]) * Math.sin(parseFloat(value[3]) * Math.PI / 180),
-      name: ''
+      name: '',
+      Voltage: value[0],
+      Current: value[1],
     }
 
     return calculate[key]
@@ -130,6 +144,23 @@ export const useData = () => {
       return []
     }
   }
+
+  const exportVoltammeterDataToExcel = (columns: string[]) => {
+    if (columns.length > 0) {
+      return data?.filter(f => f.selected).map((file, i) => {
+        return {
+          name: file.name,
+          value: file.content.map((c, j) => columns.reduce((acc, curr) => ({
+            ...acc, [`${curr} (${i + 1})`]: calculateColumn(curr, [...c, ((file.voltammeter.totalTime * 1000 / file.pointNumber) * j).toString()], false)
+          }), {})),
+        }
+      })
+    }
+    else {
+      return []
+    }
+  }
+
 
   const cleanData = () => setData(null)
 
@@ -175,6 +206,7 @@ export const useData = () => {
     getModuleFase,
     exportImpedanceDataToExcel,
     getVCData,
-    getZIZRvsFrequency
+    getZIZRvsFrequency,
+    exportVoltammeterDataToExcel
   };
 };
