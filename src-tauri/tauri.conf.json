@@ -58,7 +58,7 @@
     },
     "windows": [
       {
-        "fullscreen": true,
+        "fullscreen": false,
         "height": 700,
         "resizable": true,
         "title": "graf1",
