@@ -56,23 +56,55 @@ const extractSerialPoint = (files: File[]): ProcessFile[] => {
   for (let i = 0; i < files.length; i++) {
     const element = files[i]
     if (fileType(element.name) === 'teq4Z') {
-      const pointNumber = parseInt(files[i].content.split(/(?:\r\n|\r|\n)/g)[105])
-      const data = _.slice(files[i].content.split(/(?:\r\n|\r|\n)/g), 146, 146 + pointNumber)
-      const dataPoint: string[][] = data.map((line) => line.split(','))
-      processFile.push({ id: i, type: 'teq4Z', name: element.name, pointNumber, content: dataPoint, selected: i === 0 })
-    } else if (fileType(element.name) === 'teq4') {
-      console.log('here')
       const arrayFile = files[i].content.split(/(?:\r\n|\r|\n)/g)
-      const countX = parseInt(arrayFile[24].split(',')[1])
+      const pointNumber = parseInt(arrayFile[105])
+      const data = _.slice(arrayFile, 146, 146 + pointNumber)
+      const dataPoint: string[][] = data.map((line) => line.split(','))
+      const impedance: ProcessFile['impedance'] = {
+        V: parseFloat(arrayFile[10].split(',')[1]),
+        signalAmplitude: parseFloat(arrayFile[113].split(',')[0]),
+        sFrequency: parseFloat(arrayFile[103].split(',')[0]),
+        eFrequency: parseFloat(arrayFile[104].split(',')[0]),
+        totalPoints: parseInt(arrayFile[105].split(',')[0]),
+      }
+      processFile.push({
+        id: i,
+        type: 'teq4Z',
+        name: element.name,
+        pointNumber, content:
+          dataPoint,
+        selected: i === 0,
+        impedance: impedance
+      })
+    } else if (fileType(element.name) === 'teq4') {
+      const arrayFile = files[i].content.split(/(?:\r\n|\r|\n)/g)
+      const countX = parseInt(arrayFile[23].split(',')[1])
       const countY = parseInt(arrayFile[24].split(',')[1])
       const dataX = _.slice(arrayFile, 146, 146 + countX)
       const dataY = _.slice(arrayFile, 146 + countX, 146 + countX + countY)
       const dataPoint: string[][] = dataX.map((x, index) => [x, dataY[index]])
+      const samplesSec = parseInt(arrayFile[27].split(',')[1])
+      const range = parseInt(arrayFile[13].split(',')[1])
+      const cicles = parseInt(arrayFile[17].split(',')[1])
+      const totalTime = (countX / samplesSec)
+
       processFile.push({
-        id: i, type: 'teq4', name: element.name, pointNumber: countX, content: dataPoint, selected: i === 0
+        id: i,
+        type: 'teq4',
+        name: element.name,
+        pointNumber: countX,
+        content: dataPoint,
+        selected: i === 0,
+        voltammeter: {
+          samplesSec,
+          cicles,
+          range,
+          totalTime,
+        }
       })
     } else throw new Error('File type not supported')
   }
+
   return processFile
 }
 
@@ -142,7 +174,7 @@ const Utf8ArrayToStr = (array: number[]): string => {
         break;
     }
   }
-  // console.log(out)
+
   return out;
 }
 
@@ -215,6 +247,12 @@ const COLUMNS_IMPEDANCE = [
   'ZI',
 ]
 
+const COLUMNS_VOLTAMETER = [
+  'Time',
+  'Voltage',
+  'Current',
+]
+
 export {
   extractSerialPoint,
   fileType,
@@ -224,5 +262,6 @@ export {
   Utf8ArrayToStr,
   readFilesUsingTauriProcess,
   COLORS,
-  COLUMNS_IMPEDANCE
+  COLUMNS_IMPEDANCE,
+  COLUMNS_VOLTAMETER
 }
