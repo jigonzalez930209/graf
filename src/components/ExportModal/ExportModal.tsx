@@ -13,6 +13,7 @@ import { Box } from '@mui/system';
 import { COLUMNS_IMPEDANCE, COLUMNS_VOLTAMETER } from '../../utils/utils';
 import _ from 'lodash';
 import ExcelFileExport from './ExcelFile';
+import CircularProgress from '@mui/material/CircularProgress';
 import { GrafContext } from '../../context/GraftContext';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -128,7 +129,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
   const [state, setState] = React.useState(
     fileType === 'teq4Z' ? COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}) : COLUMNS_VOLTAMETER.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
   );
-
+  const [exportData, setExportData] = React.useState(null)
   const [isSameSheet, setIsSameSheet] = React.useState(true)
   const [filename, setFilename] = React.useState(Date.now().toString())
 
@@ -140,21 +141,37 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
     });
   };
 
-  const error = !Object.values(state).find(c => c === true) || filename === '' || !Boolean(filename.match(/^[]{4,}/))
+  const error = !Object.values(state).find(c => c === true) || filename.length < 3
 
   const handleClose = () => {
     onClose();
   };
 
+  // React.useEffect(() => {
+  //   return () => {
+  //     setFilename(Date.now().toString())
+  //     setState(
+  //       fileType === 'teq4Z' ? COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}) : COLUMNS_VOLTAMETER.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+  //     )
+  //   }
+  // }, [open])
+
   React.useEffect(() => {
-    return () => {
-      setFilename('')
-      setState(
-        fileType === 'teq4Z' ? COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}) : COLUMNS_VOLTAMETER.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
-      )
-      console.log('unmount')
-    }
-  }, [open])
+    setExportData(null)
+    setTimeout(() => {
+      setExportData(<div>
+        <ExcelFileExport
+          filename={filename}
+          isSameSheet={isSameSheet}
+          columns={
+            Object.entries(state).filter(([k, v], _) => v === true).map(([k, v]) => k)
+          }
+        >
+        </ExcelFileExport>
+      </div>)
+
+    }, 10)
+  }, [filename, state, isSameSheet,])
 
   return (open &&
     <div>
@@ -199,13 +216,15 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
           <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
             <FormLabel component="legend">File Name</FormLabel>
             <FormGroup>
-              <TextField sx={{ width: '100%' }} value={filename} error={!Boolean(filename.length > 4)} onChange={e => setFilename(e.target.value)} name="filename" />
+              <TextField sx={{ width: '100%' }} value={filename} error={error} onChange={e => setFilename(e.target.value)} name="filename" />
             </FormGroup>
           </FormControl>
         </DialogContent>
         <DialogActions sx={{ height: '3.5rem' }}>
-          <ExcelFileExport filename={filename} isSameSheet={isSameSheet} columns={Object.entries(state).filter(([k, v], _) => v === true).map(([k, v]) => k)} >
-          </ExcelFileExport>
+          {!error ?
+            exportData :
+            <CircularProgress size={24} sx={{ color: 'primary.main' }} />}
+
         </DialogActions>
       </BootstrapDialog>
     </div>
