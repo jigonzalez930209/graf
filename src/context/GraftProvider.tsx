@@ -16,7 +16,8 @@ const INITIAL_STATE: IGraftState = {
   loading: false,
   graftType: 'scatter',
   impedanceType: 'Nyquist',
-  stepBetweenPoints: 30
+  stepBetweenPoints: 30,
+  drawerOpen: false
 }
 
 interface props {
@@ -42,6 +43,8 @@ export const GraftProvider = ({ children }: props) => {
 
   const setStepBetweenPoints = (step: IStepBetweenPoints) => dispatch({ type: 'setStepBetweenPoints', payload: step })
 
+  const setDrawerOpen = (open: boolean) => dispatch({ type: 'setDrawerOpen', payload: open })
+
   React.useEffect(() => {
     if (data?.find(file => file.selected)?.type) {
       setSelectedFile(data.find(file => file.selected).type)
@@ -56,7 +59,8 @@ export const GraftProvider = ({ children }: props) => {
       setLoading,
       setGraftType,
       setImpedanceType,
-      setStepBetweenPoints
+      setStepBetweenPoints,
+      setDrawerOpen,
     }}>
       {children}
     </GrafContext.Provider>

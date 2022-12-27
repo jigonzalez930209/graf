@@ -14,14 +14,16 @@ type GraftAction = {
     | "setLoading"
     | "setGraftType"
     | "setImpedanceType"
-    | "setStepBetweenPoints";
+    | "setStepBetweenPoints"
+    | "setDrawerOpen";
   payload:
     | INotification
     | IFileType
     | boolean
     | IGrafType
     | IGraftImpedanceType
-    | IStepBetweenPoints;
+    | IStepBetweenPoints
+    | boolean;
 };
 
 export const graftReducer = (
@@ -59,6 +61,12 @@ export const graftReducer = (
         ...state,
         stepBetweenPoints: action.payload as IStepBetweenPoints,
       };
+    case "setDrawerOpen":
+      return {
+        ...state,
+        drawerOpen: action.payload as boolean,
+      };
+
     default:
       return state;
   }

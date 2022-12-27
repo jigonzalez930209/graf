@@ -16,6 +16,7 @@ export interface IGraftState {
   graftType: IGrafType;
   impedanceType: IGraftImpedanceType;
   stepBetweenPoints: IStepBetweenPoints;
+  drawerOpen: boolean;
 }
 
 export type IGrafType = "line" | "scatter";
