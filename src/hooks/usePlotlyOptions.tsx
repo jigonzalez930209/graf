@@ -7,7 +7,7 @@ import { useData } from './useData'
 
 const usePlotlyOptions = () => {
 
-  const { graftState: { fileType, graftType, impedanceType, stepBetweenPoints }, } = React.useContext(GrafContext)
+  const { graftState: { fileType, graftType, impedanceType, stepBetweenPoints, drawerOpen }, } = React.useContext(GrafContext)
 
   const { height, width } = useWindowSize()
 
@@ -46,8 +46,8 @@ const usePlotlyOptions = () => {
 
           setLayout({
             autosize: false,
-            width: width * 0.8,
-            height: height * 0.81,
+            width: drawerOpen ? width * 0.8 : width * 0.99,
+            height: drawerOpen ? height * 0.89 : height * 0.89,
             legend: {
               x: 1.1,
               traceorder: 'normal',
@@ -58,7 +58,7 @@ const usePlotlyOptions = () => {
               },
             },
             margin: {
-              l: 50,
+              l: drawerOpen ? 50 : 0,
               r: 50,
               b: 100,
               t: 50,
@@ -113,8 +113,8 @@ const usePlotlyOptions = () => {
           }))))
           setLayout({
             autosize: false,
-            width: width * 0.8,
-            height: height * 0.81,
+            width: drawerOpen ? width * 0.8 : width * 0.99,
+            height: drawerOpen ? height * 0.89 : height * 0.89,
             margin: {
               l: 50,
               r: 50,
@@ -180,8 +180,8 @@ const usePlotlyOptions = () => {
 
           setLayout({
             autosize: false,
-            width: width * 0.8,
-            height: height * 0.81,
+            width: drawerOpen ? width * 0.8 : width * 0.99,
+            height: drawerOpen ? height * 0.89 : height * 0.89,
             legend: {
               x: 1.1,
               traceorder: 'normal',
@@ -258,8 +258,8 @@ const usePlotlyOptions = () => {
 
         setLayout({
           autosize: false,
-          width: width * 0.7,
-          height: height * 0.81,
+          width: drawerOpen ? width * 0.8 : width * 0.99,
+          height: drawerOpen ? height * 0.89 : height * 0.89,
           margin: {
             l: 50,
             r: 50,
@@ -268,7 +268,7 @@ const usePlotlyOptions = () => {
             pad: 4
           },
           title: {
-            text: impedanceType,
+            text: 'VC',
             font: {
               size: 18
             },
@@ -311,7 +311,7 @@ const usePlotlyOptions = () => {
       setData([])
     }
 
-  }, [currentData, fileType, graftType, impedanceType, width, height, stepBetweenPoints])
+  }, [currentData, fileType, graftType, impedanceType, width, height, stepBetweenPoints, drawerOpen])
 
   return { layout, config, data }
 }
