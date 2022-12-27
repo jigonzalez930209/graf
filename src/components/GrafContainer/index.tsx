@@ -11,6 +11,7 @@ const PlotlyChart = () => {
       data={data}
       layout={layout}
       config={config}
+    // onUpdate={(event) => console.log(event)}
     />
   );
 }
