@@ -147,15 +147,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
     onClose();
   };
 
-  // React.useEffect(() => {
-  //   return () => {
-  //     setFilename(Date.now().toString())
-  //     setState(
-  //       fileType === 'teq4Z' ? COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}) : COLUMNS_VOLTAMETER.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
-  //     )
-  //   }
-  // }, [open])
-
   React.useEffect(() => {
     setExportData(null)
     setTimeout(() => {
@@ -224,7 +215,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
           {!error ?
             exportData :
             <CircularProgress size={24} sx={{ color: 'primary.main' }} />}
-
         </DialogActions>
       </BootstrapDialog>
     </div>
