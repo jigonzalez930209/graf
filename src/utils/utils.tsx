@@ -42,11 +42,13 @@ const fileType = (fileName: string): string => {
   const fileNameParts: String[] = fileName.split('.')
   const fileExtension = fileNameParts[fileNameParts.length - 1]
 
-  if (fileExtension === 'teq4Z') {
+  if (fileExtension === 'teq4Z')
     return 'teq4Z'
-  } else if (fileExtension === 'teq4') {
+  else if (fileExtension === 'teq4')
     return 'teq4'
-  } else return null
+  else if (fileExtension === 'csv')
+    return 'csv'
+  else return null
 }
 
 
@@ -102,7 +104,10 @@ const extractSerialPoint = (files: File[]): ProcessFile[] => {
           totalTime,
         }
       })
-    } else throw new Error('File type not supported')
+    } else if (fileType(element.name) === 'csv') {
+
+    }
+    else throw new Error('File type not supported')
   }
 
   return processFile
