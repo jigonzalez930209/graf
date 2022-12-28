@@ -7,9 +7,8 @@ import Loader from "./Loader/Loader";
 
 import { useData } from "../hooks/useData";
 import AppBar from "./AppBar";
-// import ApexChart from "./GrafContainer";
-import { ReactECharts } from "./GrafContainer/Echart";
 import { GrafContext } from "../context/GraftContext";
+import PlotlyChart from "./GrafContainer";
 
 const Index: React.FC = () => {
   const { updateData, data: Data } = useData();
@@ -40,17 +39,15 @@ const Index: React.FC = () => {
         open={loading}
         onClick={() => { }}
       >
-        {/* <Loader type="clip" /> */}
-        <CircularProgress size={150} sx={{}} />
+        <Loader type="hash" />
       </Backdrop>
       }
-      < AppBar
+      <AppBar
         readAllFiles={readAllFiles}
         files={Data}
         content={
-          <div style={{ position: 'relative', background: '#fff' }} >
-            <ReactECharts title={chartTitle()} />
-            {/* {data?.length > 0 && <ApexChart type={graftType} isImpedance={true} isVC={true} />} */}
+          <div>
+            <PlotlyChart />
           </div>
         }
       />

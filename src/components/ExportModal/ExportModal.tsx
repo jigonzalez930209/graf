@@ -7,13 +7,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox';
 import { FormControl, FormControlLabel, FormGroup, FormHelperText, FormLabel, Switch, TextField } from '@mui/material';
 import { Box } from '@mui/system';
-import { COLUMNS_IMPEDANCE } from '../../utils/utils';
+import { COLUMNS_IMPEDANCE, COLUMNS_VOLTAMETER } from '../../utils/utils';
 import _ from 'lodash';
 import ExcelFileExport from './ExcelFile';
+import CircularProgress from '@mui/material/CircularProgress';
+import { GrafContext } from '../../context/GraftContext';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -124,11 +125,11 @@ type ExportModalProps = {
 }
 
 const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
-
+  const { graftState: { fileType } } = React.useContext(GrafContext)
   const [state, setState] = React.useState(
-    COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+    fileType === 'teq4Z' ? COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}) : COLUMNS_VOLTAMETER.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
   );
-
+  const [exportData, setExportData] = React.useState(null)
   const [isSameSheet, setIsSameSheet] = React.useState(true)
   const [filename, setFilename] = React.useState(Date.now().toString())
 
@@ -140,19 +141,32 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
     });
   };
 
-  const error = !Object.values(state).find(c => c === true) || filename === '' || !Boolean(filename.match(/^[]{4,}/))
+  const error = !Object.values(state).find(c => c === true) || filename.length < 3
 
   const handleClose = () => {
     onClose();
   };
 
-  const handleSubmit = () => {
+  React.useEffect(() => {
+    setExportData(null)
+    const timer = setTimeout(() => {
+      setExportData(<div>
+        <ExcelFileExport
+          filename={filename}
+          isSameSheet={isSameSheet}
+          columns={
+            Object.entries(state).filter(([k, v], _) => v === true).map(([k, v]) => k)
+          }
+        >
+        </ExcelFileExport>
+      </div>)
 
+    }, 10)
 
-    // onClose();
-  }
+    return () => { clearTimeout(timer) }
+  }, [filename, state, isSameSheet,])
 
-  return (
+  return (open &&
     <div>
       <BootstrapDialog
         onClose={handleClose}
@@ -165,14 +179,18 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
           Select a columns to export
         </BootstrapDialogTitle>
         <DialogContent dividers>
-
-          {/* TODO: select list of each one of the columns */}
-
           <Box sx={{ display: 'flex' }}>
             <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
               <FormLabel component="legend">Select columns to save</FormLabel>
               <FormGroup>
-                {COLUMNS_IMPEDANCE.map(column => <FormControlLabel
+                {fileType === 'teq4Z' && COLUMNS_IMPEDANCE.map(column => <FormControlLabel
+                  control={
+                    <BpCheckbox checked={state[column]} onChange={handleChange} name={column} />
+                  }
+                  key={column}
+                  label={column}
+                />)}
+                {fileType === 'teq4' && COLUMNS_VOLTAMETER.map(column => <FormControlLabel
                   control={
                     <BpCheckbox checked={state[column]} onChange={handleChange} name={column} />
                   }
@@ -191,13 +209,14 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
           <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
             <FormLabel component="legend">File Name</FormLabel>
             <FormGroup>
-              <TextField sx={{ width: '100%' }} value={filename} error={!Boolean(filename.length > 4)} onChange={e => setFilename(e.target.value)} name="filename" />
+              <TextField sx={{ width: '100%' }} value={filename} error={error} onChange={e => setFilename(e.target.value)} name="filename" />
             </FormGroup>
           </FormControl>
         </DialogContent>
         <DialogActions sx={{ height: '3.5rem' }}>
-          <ExcelFileExport filename={filename} isSameSheet={isSameSheet} columns={Object.entries(state).filter(([k, v], _) => v === true).map(([k, v]) => k)} >
-          </ExcelFileExport>
+          {!error ?
+            exportData :
+            <CircularProgress size={24} sx={{ color: 'primary.main' }} />}
         </DialogActions>
       </BootstrapDialog>
     </div>

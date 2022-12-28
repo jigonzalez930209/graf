@@ -11,11 +11,13 @@ type ExcelFileExportProps = {
 }
 
 const ExcelFileExport = ({ columns, isSameSheet, filename }: ExcelFileExportProps) => {
-  const { exportImpedanceDataToExcel } = useData()
-  const data = exportImpedanceDataToExcel(columns)
+  const { exportImpedanceDataToExcel, exportVoltammeterDataToExcel } = useData()
   const { graftState: { fileType } } = React.useContext(GrafContext);
-
+  const data = fileType === 'teq4Z' ? exportImpedanceDataToExcel(columns) : exportVoltammeterDataToExcel(columns)
   const { ExcelDownloder, Type } = useExcelDownloder();
+
+  const [component, setComponent] = React.useState(<div></div>)
+
 
   if (fileType === 'teq4Z') {
     if (isSameSheet) {
@@ -41,7 +43,7 @@ const ExcelFileExport = ({ columns, isSameSheet, filename }: ExcelFileExportProp
           </ExcelDownloder>
         </div>
       )
-    } else {
+    } else if (!isSameSheet) {
       return (
         <div>
           <ExcelDownloder
@@ -57,9 +59,30 @@ const ExcelFileExport = ({ columns, isSameSheet, filename }: ExcelFileExportProp
       )
     }
   }
-  else {
-    return null
+  else if (fileType === 'teq4') {
+    return (<div>
+      <ExcelDownloder
+        data={{
+          data:
+            [
+              ...data[0].value.map((_, i) => ({
+                ...data.reduce((acc, curr, j) => ({
+                  ...acc,
+                  [`${curr.name} (${j + 1})`]: '',
+                  ...curr.value[i]
+                }), {})
+              }))
+            ]
+        }}
+        filename={filename}
+        type={Type.Button}
+      >
+        Download
+      </ExcelDownloder>
+    </div>)
   }
+
+  return <div></div>
 }
 
 export default ExcelFileExport

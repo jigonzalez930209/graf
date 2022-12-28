@@ -15,6 +15,8 @@ export interface IGraftState {
   loading: boolean;
   graftType: IGrafType;
   impedanceType: IGraftImpedanceType;
+  stepBetweenPoints: IStepBetweenPoints;
+  drawerOpen: boolean;
 }
 
 export type IGrafType = "line" | "scatter";
@@ -28,3 +30,5 @@ export type IGraftData =
   | "IMPEDANCE_ZiZr"
   | "VC_V_vs_I"
   | "VC_t_vs_I";
+
+export type IStepBetweenPoints = number;
