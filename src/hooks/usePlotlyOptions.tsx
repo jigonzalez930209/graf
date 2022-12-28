@@ -13,7 +13,7 @@ const usePlotlyOptions = () => {
 
   const { getImpedanceData, getModuleFase, getVCData, getZIZRvsFrequency, data: currentData } = useData()
 
-  const [layout, setLayout] = React.useState({})
+  const [layout, setLayout] = React.useState(null)
   const [config, setConfig] = React.useState({ scrollZoom: true })
   const [data, setData] = React.useState([])
 
@@ -306,7 +306,7 @@ const usePlotlyOptions = () => {
     }
 
     return () => {
-      setLayout({})
+      setLayout(null)
       setConfig({ scrollZoom: true })
       setData([])
     }
