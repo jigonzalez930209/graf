@@ -28,7 +28,7 @@ export type ProcessFile = {
   id: number
   name: string
   type: 'teq4' | 'teq4Z'
-  pointNumber: number
+  pointNumber?: number
   content: string[][]
   selected: boolean
   impedance?: {
@@ -43,6 +43,9 @@ export type ProcessFile = {
     range: number
     totalTime: number
     cicles: number
+  }
+  csv?: {
+    columns: string[]
   }
 }
 
