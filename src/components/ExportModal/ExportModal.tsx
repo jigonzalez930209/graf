@@ -149,7 +149,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
 
   React.useEffect(() => {
     setExportData(null)
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setExportData(<div>
         <ExcelFileExport
           filename={filename}
@@ -162,6 +162,8 @@ const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
       </div>)
 
     }, 10)
+
+    return () => { clearTimeout(timer) }
   }, [filename, state, isSameSheet,])
 
   return (open &&
