@@ -1,4 +1,4 @@
-type NotificationType = "Error" | "Warning" | "Success" | "Info" | null;
+type NotificationType = "error" | "warning" | "success" | "info" | null;
 
 export interface INotification {
   title: string;
@@ -85,10 +85,14 @@ export type Files = {
 export type columns = {
   id: number;
   fileName: string;
-  columns: {
-    name: string;
-    index: number;
-    selected: boolean;
-    axis: "xaxis" | "yaxis" | "yaxis2" | null;
-  }[];
+  columns?:
+    | {
+        axisGroup: number | null;
+        name: string;
+        index: number;
+        selected: boolean;
+        color: string;
+        axis: "xaxis" | "yaxis" | "yaxis2" | null;
+      }[]
+    | [];
 };
