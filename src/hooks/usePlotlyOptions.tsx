@@ -7,11 +7,10 @@ import { useData } from './useData'
 
 const usePlotlyOptions = () => {
 
-  const { graftState: { fileType, graftType, impedanceType, stepBetweenPoints, drawerOpen }, } = React.useContext(GrafContext)
-
+  const { graftState: { fileType, graftType, impedanceType, stepBetweenPoints, drawerOpen, columns }, } = React.useContext(GrafContext)
   const { height, width } = useWindowSize()
 
-  const { getImpedanceData, getModuleFase, getVCData, getZIZRvsFrequency, data: currentData } = useData()
+  const { getImpedanceData, getModuleFase, getVCData, getZIZRvsFrequency, getCSVData, data: currentData } = useData()
 
   const [layout, setLayout] = React.useState(null)
   const [config, setConfig] = React.useState({ scrollZoom: true })
@@ -74,7 +73,7 @@ const usePlotlyOptions = () => {
             },
             xaxis: {
               title: {
-                text: 'Frequency',
+                text: 'log10(Frequency(Hz))',
                 font: {
                   size: 18,
                   color: '#7f7f7f'
@@ -295,6 +294,108 @@ const usePlotlyOptions = () => {
           },
 
         })
+      } else if (fileType === 'csv') {
+        let datas = getCSVData(columns)
+
+        if (datas?.length === 0) return
+
+        setData(_.flatMapDepth(
+          datas.map((d, i) => {
+            let values = []
+            values.push(
+              {
+                x: d.find(j => j.axis === 'xaxis').content,
+                y: d.find(j => j.axis === 'yaxis').content,
+                type: 'scatter',
+                mode: graftType === 'line' ? 'lines' : 'markers',
+                name: d.find(j => j.axis === 'yaxis').name,
+                legendgroup: `${d.find(j => j.axis === 'xaxis').name}`,
+                marker: {
+                  color: COLORS[i],
+                  size: 3
+                },
+                line: {
+                  color: COLORS[i],
+                  width: 1
+                },
+                color: COLORS[i]
+              }
+            )
+            d.find(j => j.axis === 'yaxis2')?.name && values.push({
+              x: d.find(j => j.axis === 'xaxis').content,
+              y: d.find(j => j.axis === 'yaxis2').content,
+              type: 'scatter',
+              mode: graftType === 'line' ? 'lines' : 'markers',
+              name: `y2_${d.find(j => j.axis === 'yaxis2').name}`,
+              legendgroup: `${d.find(j => j.axis === 'xaxis').name}`,
+              yaxis: 'y2',
+              marker: {
+                color: COLORS[i],
+                size: 3
+              },
+              line: {
+                color: COLORS[i],
+                width: 1
+              },
+              color: COLORS[i]
+            })
+
+            return values
+          })))
+        setLayout({
+          autosize: false,
+          width: drawerOpen ? width * 0.8 : width * 0.99,
+          height: drawerOpen ? height * 0.89 : height * 0.89,
+          legend: {
+            x: 1.1,
+            traceorder: 'normal',
+            font: {
+              family: 'sans-serif',
+              size: 12,
+              color: '#000'
+            },
+          },
+          margin: {
+            l: drawerOpen ? 50 : 0,
+            r: 50,
+            b: 100,
+            t: 50,
+            pad: 4
+          },
+          title: {
+            font: {
+              size: 18
+            },
+            xref: 'paper',
+            x: 0.005,
+          },
+          xaxis: {
+            title: {
+              text: datas[0].find(j => j.axis === 'xaxis').name,
+              font: {
+                size: 18,
+                color: '#7f7f7f'
+              }
+            },
+          },
+          yaxis: {
+            title: {
+              text: datas[0].find(j => j.axis === 'yaxis').name,
+              x: 0,
+              font: {
+                size: 18,
+                color: '#7f7f7f'
+              }
+            }
+          },
+          yaxis2: {
+            title: datas[0].find(j => j.axis === 'yaxis2')?.name,
+            overlaying: 'y',
+            side: 'right',
+            titlefont: { color: '#7f7f7f', size: 18 },
+            tickfont: { color: '#7f7f7f' },
+          }
+        })
       }
 
       // set config and layout
@@ -311,7 +412,7 @@ const usePlotlyOptions = () => {
       setData([])
     }
 
-  }, [currentData, fileType, graftType, impedanceType, width, height, stepBetweenPoints, drawerOpen])
+  }, [currentData, fileType, graftType, impedanceType, width, height, stepBetweenPoints, drawerOpen, columns])
 
   return { layout, config, data }
 }
