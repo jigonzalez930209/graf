@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Backdrop, CircularProgress } from "@mui/material";
+import { Backdrop } from "@mui/material";
 import * as _ from 'lodash';
 
 import { readFilesUsingTauriProcess } from "../utils/utils";
@@ -17,19 +17,6 @@ const Index: React.FC = () => {
   const readAllFiles = async () => {
     setLoading(true)
     updateData(await readFilesUsingTauriProcess().finally(() => setLoading(false)))
-  }
-
-  const chartTitle = (): string => {
-    switch (impedanceType) {
-      case 'Nyquist':
-        return 'Nyquist'
-      case 'Bode':
-        return 'Bode'
-      case 'ZiZrVsFreq':
-        return 'ZI, ZR vs Freq'
-      default:
-        return ''
-    }
   }
 
   return (
