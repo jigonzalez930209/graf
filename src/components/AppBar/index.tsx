@@ -41,7 +41,7 @@ function style(color) {
 const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
   const { cleanData } = useData()
   const [open, setOpen] = React.useState(false)
-  const { graftState: { drawerOpen }, setDrawerOpen } = React.useContext(GrafContext)
+  const { graftState: { drawerOpen, fileType }, setDrawerOpen } = React.useContext(GrafContext)
   const [logsDrawerOpen, setLogsDrawerOpen] = React.useState(false)
 
   return (
@@ -72,8 +72,8 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
             <IconButton
               size="large"
               sx={{ marginRight: 2 }}
-              color={files?.length > 0 ? 'inherit' : 'error'}
-              disabled={files?.length < 1}
+              color={(files?.length > 0 || fileType === 'csv') ? 'inherit' : 'error'}
+              disabled={(files?.length < 1 || fileType === 'csv')}
               onClick={() => setOpen(true)}
             >
               <SaveIcon />
