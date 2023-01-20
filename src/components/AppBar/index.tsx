@@ -4,8 +4,8 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import FileOpenIcon from '@mui/icons-material/FileOpen';
+import SaveIcon from '@mui/icons-material/Save';
 import ClearIcon from '@mui/icons-material/Clear';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -67,7 +67,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
               sx={{ marginRight: 2 }}
               onClick={readAllFiles}
             >
-              <CloudUploadIcon />
+              <FileOpenIcon />
             </IconButton>
             <IconButton
               size="large"
@@ -76,7 +76,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
               disabled={files?.length < 1}
               onClick={() => setOpen(true)}
             >
-              <CloudDownloadIcon />
+              <SaveIcon />
             </IconButton>
             <IconButton
               size="large"
