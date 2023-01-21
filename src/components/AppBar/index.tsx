@@ -20,6 +20,7 @@ import GraftHandlerPopper from '../GraftHandlerPopper';
 import { GrafContext } from '../../context/GraftContext';
 import Logs from '../LogsComponent';
 import { ProcessFile } from '../../interfaces/interfaces';
+import Tooltip from '../Tooltip';
 
 const drawerWidth = 240;
 type BarProps = {
@@ -50,44 +51,52 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
       <ExportModal open={open} onClose={() => setOpen(false)} />
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <IconButton
-            onClick={() => setDrawerOpen(!drawerOpen)}
-            color="inherit"
-            edge="start"
-          >
-            {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
+          <Tooltip title="Open & Close 'Drawer'" placement="bottom">
+            <IconButton
+              onClick={() => setDrawerOpen(!drawerOpen)}
+              color="inherit"
+              edge="start"
+            >
+              {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </Tooltip>
           <Typography variant="h6" noWrap component="div">
             Graf 0.001!!
           </Typography>
           <Box sx={{ alignSelf: 'center', justifySelf: 'end' }}>
-            <IconButton
-              size="large"
-              color="inherit"
-              sx={{ marginRight: 2 }}
-              onClick={readAllFiles}
-            >
-              <FileOpenIcon />
-            </IconButton>
-            <IconButton
-              size="large"
-              sx={{ marginRight: 2 }}
-              color={(files?.length > 0 || fileType === 'csv') ? 'inherit' : 'error'}
-              disabled={(files?.length < 1 || fileType === 'csv')}
-              onClick={() => setOpen(true)}
-            >
-              <SaveIcon />
-            </IconButton>
-            <IconButton
-              size="large"
-              color={files?.length > 0 ? 'inherit' : 'error'}
-              disabled={files?.length < 1}
-              onClick={() => cleanData()}
-            >
-              <ClearIcon />
-            </IconButton>
-            <GraftHandlerPopper />
+            <Tooltip title="Open files" placement="bottom">
+              <IconButton
+                size="medium"
+                color="inherit"
+                sx={{ marginRight: 2 }}
+                onClick={readAllFiles}
+              >
+                <FileOpenIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Download file" placement="bottom">
+              <IconButton
+                size="medium"
+                sx={{ marginRight: 2 }}
+                color={(files?.length > 0 || fileType === 'csv') ? 'inherit' : 'error'}
+                disabled={(files?.length < 1 || fileType === 'csv')}
+                onClick={() => setOpen(true)}
+              >
+                <SaveIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Eliminate data cache" placement="bottom">
+              <IconButton
+                size="medium"
+                color={files?.length > 0 ? 'inherit' : 'error'}
+                disabled={files?.length < 1}
+                onClick={() => cleanData()}
+              >
+                <ClearIcon />
+              </IconButton>
+            </Tooltip>
 
+            <GraftHandlerPopper />
           </Box>
         </Toolbar>
       </AppBar>
