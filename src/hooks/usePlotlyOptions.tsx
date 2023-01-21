@@ -7,7 +7,7 @@ import { useData } from './useData'
 
 const usePlotlyOptions = () => {
 
-  const { graftState: { fileType, graftType, impedanceType, stepBetweenPoints, drawerOpen, columns }, } = React.useContext(GrafContext)
+  const { graftState: { fileType, graftType, impedanceType, stepBetweenPoints, drawerOpen, csvFileColum }, } = React.useContext(GrafContext)
   const { height, width } = useWindowSize()
 
   const { getImpedanceData, getModuleFase, getVCData, getZIZRvsFrequency, getCSVData, data: currentData } = useData()
@@ -235,8 +235,6 @@ const usePlotlyOptions = () => {
 
         }
 
-
-
       } else if (fileType === 'teq4') {
         setData(getVCData(stepBetweenPoints).map(((d, i) => ({
           x: d.content.map(j => j[0]),
@@ -295,9 +293,113 @@ const usePlotlyOptions = () => {
 
         })
       } else if (fileType === 'csv') {
-        let datas = getCSVData(columns)
+        let datas = getCSVData(csvFileColum)
 
         if (datas?.length === 0) return
+
+        if (!_.isEmpty(_.find(csvFileColum.columns, j => j.axisGroup === 'oneX'))) {
+          const [axisX, axisYs] = _.partition(datas, j => j.axis === 'xaxis')
+
+          setData(_.flatMapDepth(
+            axisYs.map((d, i) => {
+              let values = []
+              d.axis === 'yaxis' && values.push(
+                {
+                  x: axisX[0].content,
+                  y: d.content,
+                  type: 'scatter',
+                  mode: graftType === 'line' ? 'lines' : 'markers',
+                  name: d.name,
+                  legendgroup: `${d.name}`,
+                  marker: {
+                    color: COLORS[i],
+                    size: 3
+                  },
+                  line: {
+                    color: COLORS[i],
+                    width: 1
+                  },
+                  color: COLORS[i]
+                }
+              )
+              d.axis === 'yaxis2' && values.push({
+                x: axisX[0].content,
+                y: d.content,
+                type: 'scatter',
+                mode: graftType === 'line' ? 'lines' : 'markers',
+                name: `y2_${d.name}`,
+                legendgroup: `${axisX[0].name}`,
+                yaxis: 'y2',
+                marker: {
+                  color: COLORS[i],
+                  size: 3
+                },
+                line: {
+                  color: COLORS[i],
+                  width: 1
+                },
+                color: COLORS[i]
+              })
+
+              return values
+            })))
+          setLayout({
+            autosize: false,
+            width: drawerOpen ? width * 0.8 : width * 0.99,
+            height: drawerOpen ? height * 0.89 : height * 0.89,
+            legend: {
+              x: 1.1,
+              traceorder: 'normal',
+              font: {
+                family: 'sans-serif',
+                size: 12,
+                color: '#000'
+              },
+            },
+            margin: {
+              l: drawerOpen ? 50 : 0,
+              r: 50,
+              b: 100,
+              t: 50,
+              pad: 4
+            },
+            title: {
+              font: {
+                size: 18
+              },
+              xref: 'paper',
+              x: 0.005,
+            },
+            xaxis: {
+              title: {
+                text: axisX[0].name,
+                font: {
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              },
+            },
+            yaxis: {
+              title: {
+                text: datas.find(j => j.axis === 'yaxis').name,
+                x: 0,
+                font: {
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              }
+            },
+            yaxis2: {
+              title: datas.find(j => j.axis === 'yaxis2')?.name,
+              overlaying: 'y',
+              side: 'right',
+              titlefont: { color: '#7f7f7f', size: 18 },
+              tickfont: { color: '#7f7f7f' },
+            }
+          })
+
+          return
+        }
 
         setData(_.flatMapDepth(
           datas.map((d, i) => {
@@ -412,7 +514,7 @@ const usePlotlyOptions = () => {
       setData([])
     }
 
-  }, [currentData, fileType, graftType, impedanceType, width, height, stepBetweenPoints, drawerOpen, columns])
+  }, [currentData, fileType, graftType, impedanceType, width, height, stepBetweenPoints, drawerOpen, csvFileColum])
 
   return { layout, config, data }
 }
