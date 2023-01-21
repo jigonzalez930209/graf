@@ -7,7 +7,8 @@ import Index from "./components";
 const App = () => {
   return (
     <GraftProvider>
-      <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "right", vertical: "top" }} preventDuplicate>
+      {/* TODO: add custom snackbar component review CustomSnackbar component */}
+      <SnackbarProvider maxSnack={4} anchorOrigin={{ horizontal: "right", vertical: "bottom" }} autoHideDuration={8000} preventDuplicate>
         <Index />
       </SnackbarProvider>
     </GraftProvider>
