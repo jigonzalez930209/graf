@@ -5,7 +5,7 @@ import {
   IGrafType,
   IGraftImpedanceType,
   IStepBetweenPoints,
-  columns,
+  csvFileColum,
 } from "../interfaces/interfaces";
 
 type GraftAction = {
@@ -26,7 +26,7 @@ type GraftAction = {
     | IGraftImpedanceType
     | IStepBetweenPoints
     | boolean
-    | columns;
+    | csvFileColum;
 };
 
 export const graftReducer = (
@@ -72,7 +72,7 @@ export const graftReducer = (
     case "setSelectedColumns":
       return {
         ...state,
-        columns: action.payload as columns,
+        csvFileColum: action.payload as csvFileColum,
       };
     default:
       return state;

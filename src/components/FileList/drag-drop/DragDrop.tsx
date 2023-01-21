@@ -17,7 +17,7 @@ import { arrayMove, insertAtIndex, removeAtIndex } from "./utils/array";
 
 import "./Container.css";
 import { Grid } from "@mui/material";
-import { columns } from "../../../interfaces/interfaces";
+import { csvFileColum } from "../../../interfaces/interfaces";
 import { GrafContext } from "../../../context/GraftContext";
 import _ from "lodash";
 
@@ -30,7 +30,7 @@ export type ColumnsGroup = {
 
 const DragDrop = ({ onChange }: { onChange: (colGroup: ColumnsGroup) => void }) => {
 
-  const { graftState: { columns } } = React.useContext(GrafContext);
+  const { graftState: { csvFileColum } } = React.useContext(GrafContext);
 
   const [itemGroups, setItemGroups] = React.useState<ColumnsGroup>({
     columns: [],
@@ -142,12 +142,11 @@ const DragDrop = ({ onChange }: { onChange: (colGroup: ColumnsGroup) => void }) 
   };
 
   React.useEffect(() => {
-    console.error({ columns })
     setItemGroups({
-      columns: _.filter(columns.columns, (col) => col.axisGroup === null).map((col) => col.name),
-      yAxis: _.sortBy(_.filter(columns.columns, (col) => col.axis === 'yaxis'), ['axisGroup']).map((col) => col.name),
-      xAxis: _.sortBy(_.filter(columns.columns, (col) => col.axis === 'xaxis'), ['axisGroup']).map((col) => col.name),
-      y2Axis: _.sortBy(_.filter(columns.columns, (col) => col.axis === 'yaxis2'), ['axisGroup']).map((col) => col.name),
+      columns: _.filter(csvFileColum.columns, (col) => col.axisGroup === null).map((col) => col.name),
+      yAxis: _.sortBy(_.filter(csvFileColum.columns, (col) => col.axis === 'yaxis'), ['axisGroup']).map((col) => col.name),
+      xAxis: _.sortBy(_.filter(csvFileColum.columns, (col) => col.axis === 'xaxis'), ['axisGroup']).map((col) => col.name),
+      y2Axis: _.sortBy(_.filter(csvFileColum.columns, (col) => col.axis === 'yaxis2'), ['axisGroup']).map((col) => col.name),
     })
 
   }, []);
