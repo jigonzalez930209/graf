@@ -17,7 +17,7 @@ type ColumnsDialogProp = {
 }
 
 const ColumnsDialog = ({ open, setOpen }: ColumnsDialogProp) => {
-  const { graftState: { columns }, setSelectedColumns } = React.useContext(GrafContext)
+  const { graftState: { csvFileColum }, setSelectedColumns } = React.useContext(GrafContext)
   const { enqueueSnackbar } = useSnackbar()
 
   const [currentColumns, setCurrentColumns] = React.useState<ColumnsGroup>(null)
@@ -28,7 +28,7 @@ const ColumnsDialog = ({ open, setOpen }: ColumnsDialogProp) => {
 
   const handleClose = () => {
     setOpen(false);
-    columns && setSelectedColumns(columns)
+    csvFileColum && setSelectedColumns(csvFileColum)
   };
 
   const handleApply = () => {
@@ -39,23 +39,47 @@ const ColumnsDialog = ({ open, setOpen }: ColumnsDialogProp) => {
       return;
     }
 
-    if (currentColumns.xAxis.length !== currentColumns.yAxis.length) {
-      console.warn('X and Y axis must have the same number of columns');
-      enqueueSnackbar('X and Y axis must have the same number of columns', { variant: 'error' })
+    if (currentColumns.xAxis.length === 1) {
+      console.log('X axis have only one column the Y1 and Y2 columns could have more than one column');
+      enqueueSnackbar('X axis have only one column the Y1 and Y2 columns could have more than one column', { variant: 'info', autoHideDuration: 10000 })
+    }
+
+    if (currentColumns.xAxis.length > 1 && currentColumns.xAxis.length < currentColumns.yAxis.length) {
+      console.warn('Y1 should be have maximum the number of column of x Axis');
+      enqueueSnackbar('Y1 should be have maximum the number of column of x Axis', { variant: 'error' })
       return;
     }
 
-    if (currentColumns.xAxis.length < currentColumns.y2Axis.length) {
+    if (currentColumns.xAxis.length > 1 && currentColumns.xAxis.length < currentColumns.y2Axis.length) {
       console.warn('Y2 should be have maximum the number of column of x Axis');
       enqueueSnackbar('Y2 should be have maximum the number of column of x Axis', { variant: 'error' })
       return;
     }
 
+    // One 'x' and various 'y'
+    if (currentColumns.xAxis.length === 1 && currentColumns.xAxis.length <= currentColumns.yAxis.length) {
+
+      setSelectedColumns({
+        ...csvFileColum,
+        columns: csvFileColum.columns.map((column) => {
+          const axis = currentColumns.xAxis.includes(column.name) && 'xaxis' || currentColumns.yAxis.includes(column.name) && 'yaxis' || currentColumns.y2Axis.includes(column.name) && 'yaxis2' || null
+          let axisGroup = !!axis ? 'oneX' : null
+          return {
+            ...column,
+            axis,
+            axisGroup,
+          }
+        }),
+
+      })
+      setOpen(false);
+      return;
+    }
+
     setSelectedColumns({
-      ...columns,
-      columns: columns.columns.map((column, index) => {
+      ...csvFileColum,
+      columns: csvFileColum.columns.map((column) => {
         const axis = currentColumns.xAxis.includes(column.name) && 'xaxis' || currentColumns.yAxis.includes(column.name) && 'yaxis' || currentColumns.y2Axis.includes(column.name) && 'yaxis2' || null
-        const selected = axis !== null ? true : column.selected
         let axisGroup
         if (axis === null) {
           axisGroup = null
@@ -74,11 +98,9 @@ const ColumnsDialog = ({ open, setOpen }: ColumnsDialogProp) => {
           }
         }
 
-        console.log({ axisGroup, name: column.name, axis })
         return {
           ...column,
           axis,
-          selected,
           axisGroup: axisGroup && axisGroup(),
         }
       }),

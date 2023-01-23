@@ -17,7 +17,7 @@ export interface IGraftState {
   impedanceType: IGraftImpedanceType;
   stepBetweenPoints: IStepBetweenPoints;
   drawerOpen: boolean;
-  columns: columns;
+  csvFileColum: csvFileColum;
 }
 
 export type IGrafType = "line" | "scatter";
@@ -82,15 +82,14 @@ export type ProcessFile = {
 export type Files = {
   files: File[];
 };
-export type columns = {
+export type csvFileColum = {
   id: number;
   fileName: string;
   columns?:
     | {
-        axisGroup: number | null;
+        axisGroup: number | "oneX" | null;
         name: string;
         index: number;
-        selected: boolean;
         color: string;
         axis: "xaxis" | "yaxis" | "yaxis2" | null;
       }[]

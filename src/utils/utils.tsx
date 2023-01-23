@@ -158,41 +158,58 @@ const Utf8ArrayToStr = (array: number[]): string => {
   return out;
 }
 
+const readFileContents = async (file) => {
+  return new Promise((resolve, reject) => {
+    try {
+      resolve(readBinaryFile(file));
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+const readAll = async (AllFiles) => {
+  let notSupported: string[] = []
+  const results = await Promise.all(AllFiles.filter((file) => {
+    const name = _.last(file.split(/\\/g)) as string;
+    if (!['csv', 'teq4', 'teq4z'].includes(fileType(name))) {
+      console.log(`File type not supported '${name}'`)
+      notSupported.push(name)
+      return false
+    }
+    return true
+  }).map(async (file) => {
+    const fileContents = await readFileContents(file);
+    const name = _.last(file.split(/\\/g)) as string;
+
+    if (fileType(name) === 'csv') {
+      const contentXLSX = read(fileContents as number[], { type: 'array' });
+      return { content: Object.values(utils.sheet_to_json(contentXLSX.Sheets[contentXLSX.SheetNames[0]])).map(i => Object.values(i)), name, columns: Object.keys(utils.sheet_to_json(contentXLSX.Sheets[contentXLSX.SheetNames[0]])[0]) };
+    }
+    return { content: await Utf8ArrayToStr(fileContents as number[]), name };
+  }));
+
+  return { results, notSupported };
+}
+
+const readAllFiles = async (selected) => {
+  const readAllFiles = await readAll(selected)
+  const contents = await extractSerialPoint(await readAllFiles.results)
+  return { contents: contents as ProcessFile[], notSupported: readAllFiles.notSupported }
+}
+
 const readFilesUsingTauriProcess = async () => {
   const selected = await open({
     multiple: true,
     filters: [{
-      name: 'teq4Z & teq4 & csv',
+      name: '[*.teq4Z] [*.teq4] [*.csv]',
       extensions: ['teq4Z', 'teq4', 'csv']
     }]
   });
   if (Array.isArray(selected)) {
-    const readFileContentsI = async (file) => {
-      return new Promise((resolve, reject) => {
-        try {
-          resolve(readBinaryFile(file));
-        } catch (error) {
-          reject(error);
-        }
-      });
 
-    }
-    const readAllFiles = async (AllFiles) => {
-
-      const results = await Promise.all(AllFiles.map(async (file) => {
-        const fileContents = await readFileContentsI(file);
-        const name = _.last(file.split(/\\/g)) as string;
-        if (fileType(name) === 'csv') {
-          const contentXLSX = read(fileContents as number[], { type: 'array' });
-          return { content: Object.values(utils.sheet_to_json(contentXLSX.Sheets[contentXLSX.SheetNames[0]])).map(i => Object.values(i)), name, columns: Object.keys(utils.sheet_to_json(contentXLSX.Sheets[contentXLSX.SheetNames[0]])[0]) };
-        }
-        return { content: await Utf8ArrayToStr(fileContents as number[]), name };
-      }));
-
-      return results;
-    }
-    const contents = extractSerialPoint(await readAllFiles(selected))
-    return contents
+    const readAll = await readAllFiles(selected)
+    return await readAll.contents
   } else if (selected === null) {
     console.log('user cancelled the selection')
   } else {
@@ -243,6 +260,7 @@ export {
   fileType,
   Utf8ArrayToStr,
   readFilesUsingTauriProcess,
+  readAllFiles,
   COLORS,
   COLUMNS_IMPEDANCE,
   COLUMNS_VOLTAMETER

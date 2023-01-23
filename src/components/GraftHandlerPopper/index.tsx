@@ -4,6 +4,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
 import { IGraftImpedanceType, IGrafType } from "../../interfaces/interfaces";
 import { GrafContext } from '../../context/GraftContext';
+import Tooltip from '../Tooltip';
 
 
 const GraftHandlerPopper = () => {
@@ -36,14 +37,16 @@ const GraftHandlerPopper = () => {
 
   return (
     <>
-      <IconButton
-        aria-describedby={id}
-        size="large"
-        color="inherit"
-        sx={{ ml: 2 }}
-        onClick={handleClick}>
-        <SettingsIcon />
-      </IconButton>
+      <Tooltip title="Current settings" placement="bottom">
+        <IconButton
+          aria-describedby={id}
+          size="large"
+          color="inherit"
+          sx={{ ml: 2 }}
+          onClick={handleClick}>
+          <SettingsIcon />
+        </IconButton>
+      </Tooltip>
       <Popover
         id={id}
         sx={{ minWidth: 420, minHeight: 250 }}

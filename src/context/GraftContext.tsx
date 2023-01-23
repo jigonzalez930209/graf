@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { columns, IGraftImpedanceType, IGraftState, IGrafType, INotification } from '../interfaces/interfaces';
+import { csvFileColum, IGraftImpedanceType, IGraftState, IGrafType, INotification } from '../interfaces/interfaces';
 
 
 export type GrafContextProps = {
@@ -11,7 +11,7 @@ export type GrafContextProps = {
   setImpedanceType: (type: IGraftImpedanceType) => void;
   setStepBetweenPoints: (step: number) => void;
   setDrawerOpen: (open: boolean) => void;
-  setSelectedColumns: (columns: columns) => void;
+  setSelectedColumns: (columns: csvFileColum) => void;
 }
 
 

@@ -3,13 +3,13 @@ import _ from 'lodash'
 
 import useLocalStorage from './useLocalStorage'
 import { GrafContext } from '../context/GraftContext'
-import { columns, IStepBetweenPoints, ProcessFile } from '../interfaces/interfaces'
+import { csvFileColum, IStepBetweenPoints, ProcessFile } from '../interfaces/interfaces'
 
 
 export const useData = () => {
 
   const [data, setData] = useLocalStorage<ProcessFile[]>('files', null)
-  const { graftState: { fileType, columns }, setSelectedFile, setSelectedColumns: setColumns } = React.useContext(GrafContext)
+  const { graftState: { fileType, csvFileColum }, setSelectedFile, setSelectedColumns: setColumns } = React.useContext(GrafContext)
 
   const updateData = (payload: ProcessFile[]) => {
     if (payload?.length > 0) {
@@ -24,14 +24,13 @@ export const useData = () => {
     if (file.type === fileType) {
       if (file.type === 'csv') {
         setData(prev => prev.map(file => ({ ...file, selected: file.id === id })))
-        if (_.isEmpty(columns) || columns.fileName !== file.name) setColumns(
+        if (_.isEmpty(csvFileColum) || csvFileColum.fileName !== file.name) setColumns(
           {
             id: file.id,
             fileName: file.name,
             columns: file.csv.columns.map((name, index) => ({
               name,
               index,
-              selected: false,
               axis: null,
               axisGroup: null,
               color: null,
@@ -45,7 +44,7 @@ export const useData = () => {
     } else {
       setSelectedFile(file.type)
       setData(prev => prev.map(file => ({ ...file, selected: file.id === id })))
-      _.isEmpty(columns) && setColumns(
+      _.isEmpty(csvFileColum) && setColumns(
         {
           id: file.id,
           fileName: file.name,
@@ -183,7 +182,7 @@ export const useData = () => {
 
   }
 
-  const getCSVData = (cols: columns) => {
+  const getCSVData = (cols: csvFileColum) => {
     if (data === null) {
       return [];
     }
@@ -193,6 +192,9 @@ export const useData = () => {
     const columns = _.groupBy(cols?.columns, 'axisGroup')
 
     let currentData = []
+    if (!_.isEmpty(columns?.oneX)) {
+      return columns.oneX.map((c) => ({ ...c, content: csvData.content.map((d) => d[c.index]) }))
+    }
 
     for (let i = 0; i < Object.entries(columns).length - 1; i++) {
       try {
