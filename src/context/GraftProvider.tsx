@@ -17,7 +17,7 @@ const INITIAL_STATE: IGraftState = {
   graftType: 'scatter',
   impedanceType: 'Nyquist',
   stepBetweenPoints: 30,
-  drawerOpen: false,
+  drawerOpen: true,
   csvFileColum: null,
 }
 
