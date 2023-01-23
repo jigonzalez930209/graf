@@ -61,7 +61,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
             </IconButton>
           </Tooltip>
           <Typography variant="h6" noWrap component="div">
-            Graf 0.001!!
+            Graf 0.1.1
           </Typography>
           <Box sx={{ alignSelf: 'center', justifySelf: 'end' }}>
             <Tooltip title="Open files" placement="bottom">

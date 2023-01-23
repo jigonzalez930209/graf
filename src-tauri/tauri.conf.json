@@ -6,8 +6,8 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "graf1",
-    "version": "0.1.0"
+    "productName": "graf",
+    "version": "0.1.1"
   },
   "tauri": {
     "allowlist": {
@@ -59,12 +59,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 700,
         "resizable": true,
-        "title": "graf1",
-        "width": 1200,
-        "center": true,
-        "fileDropEnabled": true
+        "title": "Graf 0.1.1",
+        "fileDropEnabled": true,
+        "maximized": true
       }
     ]
   }
