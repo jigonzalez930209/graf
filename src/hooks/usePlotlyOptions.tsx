@@ -1,8 +1,10 @@
 import _ from 'lodash'
 import * as React from 'react'
 import { useWindowSize } from 'usehooks-ts'
+
 import { GrafContext } from '../context/GraftContext'
 import { COLORS } from '../utils/utils'
+
 import { useData } from './useData'
 
 const usePlotlyOptions = () => {
@@ -45,7 +47,7 @@ const usePlotlyOptions = () => {
 
           setLayout({
             autosize: false,
-            width: drawerOpen ? width * 0.8 : width * 0.99,
+            width: drawerOpen ? width * 0.8 : width * 0.94,
             height: drawerOpen ? height * 0.89 : height * 0.89,
             legend: {
               x: 1.1,
@@ -112,7 +114,7 @@ const usePlotlyOptions = () => {
           }))))
           setLayout({
             autosize: false,
-            width: drawerOpen ? width * 0.8 : width * 0.99,
+            width: drawerOpen ? width * 0.8 : width * 0.95,
             height: drawerOpen ? height * 0.89 : height * 0.89,
             margin: {
               l: 50,
@@ -179,7 +181,7 @@ const usePlotlyOptions = () => {
 
           setLayout({
             autosize: false,
-            width: drawerOpen ? width * 0.8 : width * 0.99,
+            width: drawerOpen ? width * 0.8 : width * 0.95,
             height: drawerOpen ? height * 0.89 : height * 0.89,
             legend: {
               x: 1.1,
@@ -255,7 +257,7 @@ const usePlotlyOptions = () => {
 
         setLayout({
           autosize: false,
-          width: drawerOpen ? width * 0.8 : width * 0.99,
+          width: drawerOpen ? width * 0.8 : width * 0.95,
           height: drawerOpen ? height * 0.89 : height * 0.89,
           margin: {
             l: 50,
@@ -343,10 +345,11 @@ const usePlotlyOptions = () => {
 
               return values
             })))
+
           setLayout({
-            autosize: false,
-            width: drawerOpen ? width * 0.8 : width * 0.99,
-            height: drawerOpen ? height * 0.89 : height * 0.89,
+            autosize: true,
+            width: drawerOpen ? width * 0.72 : width * 0.876,
+            height: drawerOpen ? height * 0.80 : height * 0.80,
             legend: {
               x: 1.1,
               traceorder: 'normal',
@@ -357,7 +360,7 @@ const usePlotlyOptions = () => {
               },
             },
             margin: {
-              l: drawerOpen ? 50 : 0,
+              l: 50,
               r: 50,
               b: 100,
               t: 50,
@@ -446,8 +449,8 @@ const usePlotlyOptions = () => {
           })))
         setLayout({
           autosize: false,
-          width: drawerOpen ? width * 0.8 : width * 0.99,
-          height: drawerOpen ? height * 0.89 : height * 0.89,
+          width: drawerOpen ? width * 0.72 : width * 0.876,
+          height: drawerOpen ? height * 0.80 : height * 0.80,
           legend: {
             x: 1.1,
             traceorder: 'normal',
@@ -458,7 +461,7 @@ const usePlotlyOptions = () => {
             },
           },
           margin: {
-            l: drawerOpen ? 50 : 0,
+            l: 50,
             r: 50,
             b: 100,
             t: 50,
