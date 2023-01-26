@@ -21,22 +21,22 @@ import { GrafContext } from '../../context/GraftContext';
 import Logs from '../LogsComponent';
 import { ProcessFile } from '../../interfaces/interfaces';
 import Tooltip from '../Tooltip';
+import styled from '@mui/material/styles/styled';
+
+const StyledToolbar = styled(Toolbar)(() => ({
+  paddingTop: 0,
+  paddingBottom: 0,
+  // Override media queries injected by theme.mixins.toolbar
+  '@media all': {
+    minHeight: 30,
+  },
+}));
 
 const drawerWidth = 240;
 type BarProps = {
   files: ProcessFile[]
   content: JSX.Element
   readAllFiles: () => void
-}
-
-function style(color) {
-  return {
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: color
-  };
 }
 
 const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
@@ -49,56 +49,57 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <ExportModal open={open} onClose={() => setOpen(false)} />
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, minHeight: 30 }}>
+        <StyledToolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Tooltip title="Open & Close 'Drawer'" placement="bottom">
             <IconButton
               onClick={() => setDrawerOpen(!drawerOpen)}
               color="inherit"
               edge="start"
+              size="small"
             >
-              {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              {drawerOpen ? <ChevronLeftIcon fontSize='inherit' /> : <ChevronRightIcon fontSize='inherit' />}
             </IconButton>
           </Tooltip>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" sx={{ fontSize: '15px' }} noWrap component="div">
             Graf 0.1.1
           </Typography>
           <Box sx={{ alignSelf: 'center', justifySelf: 'end' }}>
             <Tooltip title="Open files" placement="bottom">
               <IconButton
-                size="medium"
+                size="small"
                 color="inherit"
                 sx={{ marginRight: 2 }}
                 onClick={readAllFiles}
               >
-                <FileOpenIcon />
+                <FileOpenIcon fontSize='inherit' />
               </IconButton>
             </Tooltip>
             <Tooltip title="Download file" placement="bottom">
               <IconButton
-                size="medium"
+                size="small"
                 sx={{ marginRight: 2 }}
                 color={(files?.length > 0 || fileType === 'csv') ? 'inherit' : 'error'}
                 disabled={(files?.length < 1 || fileType === 'csv')}
                 onClick={() => setOpen(true)}
               >
-                <SaveIcon />
+                <SaveIcon fontSize='inherit' />
               </IconButton>
             </Tooltip>
             <Tooltip title="Eliminate data cache" placement="bottom">
               <IconButton
-                size="medium"
+                size="small"
                 color={files?.length > 0 ? 'inherit' : 'error'}
                 disabled={files?.length < 1}
                 onClick={() => cleanData()}
               >
-                <ClearIcon />
+                <ClearIcon fontSize='inherit' />
               </IconButton>
             </Tooltip>
 
             <GraftHandlerPopper />
           </Box>
-        </Toolbar>
+        </StyledToolbar>
       </AppBar>
       <Drawer
         variant="persistent"
@@ -110,7 +111,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
           [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
         }}
       >
-        <Toolbar />
+        <StyledToolbar />
         <Divider />
         <Box>
           <FileList files={files} />
@@ -118,6 +119,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
           <IconButton
             onClick={() => setLogsDrawerOpen(!logsDrawerOpen)}
             color="inherit"
+            size="small"
             edge="start"
             sx={{
               position: 'absolute',
@@ -128,7 +130,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
               backgroundColor: 'grey.300',
             }}
           >
-            {logsDrawerOpen ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+            {logsDrawerOpen ? <KeyboardArrowDownIcon fontSize='inherit' /> : <KeyboardArrowUpIcon fontSize='inherit' />}
           </IconButton>
           <Drawer
             variant="persistent"
@@ -153,7 +155,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
           </Drawer>
         </Box>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 0, paddingTop: '40px', paddingLeft: '10px' }}>
         {content}
       </Box>
     </Box>
