@@ -40,11 +40,12 @@ const GraftHandlerPopper = () => {
       <Tooltip title="Current settings" placement="bottom">
         <IconButton
           aria-describedby={id}
-          size="large"
+          size="small"
           color="inherit"
           sx={{ ml: 2 }}
-          onClick={handleClick}>
-          <SettingsIcon />
+          onClick={handleClick}
+        >
+          <SettingsIcon fontSize='inherit' />
         </IconButton>
       </Tooltip>
       <Popover
