@@ -62,7 +62,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
             </IconButton>
           </Tooltip>
           <Typography variant="h6" sx={{ fontSize: '15px' }} noWrap component="div">
-            Graf 0.1.1
+            Graf 0.1.2
           </Typography>
           <Box sx={{ alignSelf: 'center', justifySelf: 'end' }}>
             <Tooltip title="Open files" placement="bottom">
@@ -96,7 +96,6 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
                 <ClearIcon fontSize='inherit' />
               </IconButton>
             </Tooltip>
-
             <GraftHandlerPopper />
           </Box>
         </StyledToolbar>
