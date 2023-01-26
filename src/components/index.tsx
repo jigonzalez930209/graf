@@ -11,10 +11,11 @@ import { useData } from "../hooks/useData";
 import Loader from "./Loader/Loader";
 import AppBar from "./AppBar";
 import PlotlyChart from "./GrafContainer";
+import DragDrop from "./FileList/drag-drop/DragDrop";
 
 const Index: React.FC = () => {
   const { updateData, data: Data } = useData();
-  const { setLoading, graftState: { loading } } = React.useContext(GrafContext);
+  const { setLoading, graftState: { loading, fileType } } = React.useContext(GrafContext);
 
   const { enqueueSnackbar } = useSnackbar()
 
@@ -39,7 +40,7 @@ const Index: React.FC = () => {
   }, [])
 
   return (
-    <div className="container">
+    <div>
       {loading && <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
@@ -53,7 +54,10 @@ const Index: React.FC = () => {
         files={Data}
         content={
           <div>
-            <PlotlyChart />
+            {fileType === "csv"
+              ? <DragDrop PlotlyChart={<PlotlyChart />} />
+              : <PlotlyChart />
+            }
           </div>
         }
       />
