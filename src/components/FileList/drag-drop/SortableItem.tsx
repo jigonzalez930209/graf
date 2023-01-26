@@ -18,8 +18,6 @@ const SortableItem = ({ id, isHorizontal, isNotIndex }) => {
 
   return (
     <Grid
-      item
-      xs={isHorizontal ? 3 : 12}
       sx={{
         transform: CSS.Transform.toString(transform),
         transition,
@@ -30,7 +28,7 @@ const SortableItem = ({ id, isHorizontal, isNotIndex }) => {
       {...attributes}
       {...listeners}
     >
-      <Item id={id} dragOverlay={isDragging} isNotIndex={isNotIndex} index={index} />
+      <Item isHorizontal={isHorizontal} id={id} dragOverlay={isDragging} isNotIndex={isNotIndex} index={index} />
     </Grid>
   );
 };
