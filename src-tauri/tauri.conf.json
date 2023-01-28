@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "graf",
-    "version": "0.1.1"
+    "version": "0.1.2"
   },
   "tauri": {
     "allowlist": {
@@ -28,7 +28,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.graf1.dev",
+      "identifier": "com.graf.dev",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -60,7 +60,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Graf 0.1.1",
+        "title": "Graf 0.1.2",
         "fileDropEnabled": true,
         "maximized": true
       }
