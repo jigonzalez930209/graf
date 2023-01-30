@@ -7,6 +7,35 @@ import { COLORS } from '../utils/utils'
 
 import { useData } from './useData'
 
+const StaticValues = ({ drawerOpen, width, height }) => ({
+  autosize: true,
+  width: drawerOpen ? width * 0.72 : width * 0.876,
+  height: drawerOpen ? height * 0.80 : height * 0.80,
+  legend: {
+    x: 1.1,
+    traceorder: 'normal',
+    font: {
+      family: 'sans-serif',
+      size: 12,
+      color: '#000'
+    },
+  },
+  margin: {
+    l: 50,
+    r: 50,
+    b: 100,
+    t: 50,
+    pad: 4
+  },
+  title: {
+    font: {
+      size: 18
+    },
+    xref: 'paper',
+    x: 0.005,
+  },
+})
+
 const usePlotlyOptions = () => {
 
   const { graftState: { fileType, graftType, impedanceType, stepBetweenPoints, drawerOpen, csvFileColum }, } = React.useContext(GrafContext)
@@ -100,7 +129,6 @@ const usePlotlyOptions = () => {
               tickfont: { color: '#7f7f7f' },
             }
           })
-
 
         } else if (impedanceType === 'Nyquist') {
           setData(getImpedanceData().map(((d, i) => ({
@@ -295,19 +323,16 @@ const usePlotlyOptions = () => {
 
         })
       } else if (fileType === 'csv') {
-        let datas = getCSVData(csvFileColum)
 
-        if (datas?.length === 0) return
+        let csvData = getCSVData(csvFileColum?.find(csv => csv.selected && (!!currentData.find(d => d.name === csv.fileName)?.name)))
 
-        if (!_.isEmpty(_.find(csvFileColum.columns, j => j.axisGroup === 'oneX'))) {
-          const [axisX, axisYs] = _.partition(datas, j => j.axis === 'xaxis')
-
+        if (csvData?.x?.length === 1) {
           setData(_.flatMapDepth(
-            axisYs.map((d, i) => {
+            csvData?.y.map((d, i) => {
               let values = []
-              d.axis === 'yaxis' && values.push(
+              values.push(
                 {
-                  x: axisX[0].content,
+                  x: csvData.x[0].content,
                   y: d.content,
                   type: 'scatter',
                   mode: graftType === 'line' ? 'lines' : 'markers',
@@ -324,13 +349,13 @@ const usePlotlyOptions = () => {
                   color: COLORS[i]
                 }
               )
-              d.axis === 'yaxis2' && values.push({
-                x: axisX[0].content,
-                y: d.content,
+              csvData?.y2[i]?.name && values.push({
+                x: csvData.x[0].content,
+                y: csvData.y2[i].content,
                 type: 'scatter',
                 mode: graftType === 'line' ? 'lines' : 'markers',
-                name: `y2_${d.name}`,
-                legendgroup: `${axisX[0].name}`,
+                name: `y2_${csvData?.y2[i]?.name}`,
+                legendgroup: `${csvData.x[0].name}`,
                 yaxis: 'y2',
                 marker: {
                   color: COLORS[i],
@@ -347,35 +372,10 @@ const usePlotlyOptions = () => {
             })))
 
           setLayout({
-            autosize: true,
-            width: drawerOpen ? width * 0.72 : width * 0.876,
-            height: drawerOpen ? height * 0.80 : height * 0.80,
-            legend: {
-              x: 1.1,
-              traceorder: 'normal',
-              font: {
-                family: 'sans-serif',
-                size: 12,
-                color: '#000'
-              },
-            },
-            margin: {
-              l: 50,
-              r: 50,
-              b: 100,
-              t: 50,
-              pad: 4
-            },
-            title: {
-              font: {
-                size: 18
-              },
-              xref: 'paper',
-              x: 0.005,
-            },
+            ...StaticValues({ drawerOpen, width, height }),
             xaxis: {
               title: {
-                text: axisX[0].name,
+                text: csvData.x[0].name,
                 font: {
                   size: 18,
                   color: '#7f7f7f'
@@ -384,7 +384,7 @@ const usePlotlyOptions = () => {
             },
             yaxis: {
               title: {
-                text: datas.find(j => j.axis === 'yaxis').name,
+                text: csvData.y[0].name,
                 x: 0,
                 font: {
                   size: 18,
@@ -393,7 +393,7 @@ const usePlotlyOptions = () => {
               }
             },
             yaxis2: {
-              title: datas.find(j => j.axis === 'yaxis2')?.name,
+              title: csvData.y2[0]?.name,
               overlaying: 'y',
               side: 'right',
               titlefont: { color: '#7f7f7f', size: 18 },
@@ -402,19 +402,38 @@ const usePlotlyOptions = () => {
           })
 
           return
-        }
+        } else if (csvData?.x?.length > 1) {
 
-        setData(_.flatMapDepth(
-          datas.map((d, i) => {
-            let values = []
-            values.push(
-              {
-                x: d.find(j => j.axis === 'xaxis').content,
-                y: d.find(j => j.axis === 'yaxis').content,
+          setData(_.flatMapDepth(
+            csvData.x.map((d, i) => {
+              let values = []
+              values.push(
+                {
+                  x: d.content,
+                  y: csvData.y[i].content,
+                  type: 'scatter',
+                  mode: graftType === 'line' ? 'lines' : 'markers',
+                  name: csvData.y[i].name,
+                  legendgroup: `${d.name}`,
+                  marker: {
+                    color: COLORS[i],
+                    size: 3
+                  },
+                  line: {
+                    color: COLORS[i],
+                    width: 1
+                  },
+                  color: COLORS[i]
+                }
+              )
+              csvData.y2[i]?.name && values.push({
+                x: d.content,
+                y: csvData.y2[i].content,
                 type: 'scatter',
                 mode: graftType === 'line' ? 'lines' : 'markers',
-                name: d.find(j => j.axis === 'yaxis').name,
-                legendgroup: `${d.find(j => j.axis === 'xaxis').name}`,
+                name: `y2_${csvData.y2[i].name}`,
+                legendgroup: `${d.name}`,
+                yaxis: 'y2',
                 marker: {
                   color: COLORS[i],
                   size: 3
@@ -424,83 +443,46 @@ const usePlotlyOptions = () => {
                   width: 1
                 },
                 color: COLORS[i]
-              }
-            )
-            d.find(j => j.axis === 'yaxis2')?.name && values.push({
-              x: d.find(j => j.axis === 'xaxis').content,
-              y: d.find(j => j.axis === 'yaxis2').content,
-              type: 'scatter',
-              mode: graftType === 'line' ? 'lines' : 'markers',
-              name: `y2_${d.find(j => j.axis === 'yaxis2').name}`,
-              legendgroup: `${d.find(j => j.axis === 'xaxis').name}`,
-              yaxis: 'y2',
-              marker: {
-                color: COLORS[i],
-                size: 3
-              },
-              line: {
-                color: COLORS[i],
-                width: 1
-              },
-              color: COLORS[i]
-            })
+              })
 
-            return values
-          })))
-        setLayout({
-          autosize: false,
-          width: drawerOpen ? width * 0.72 : width * 0.876,
-          height: drawerOpen ? height * 0.80 : height * 0.80,
-          legend: {
-            x: 1.1,
-            traceorder: 'normal',
-            font: {
-              family: 'sans-serif',
-              size: 12,
-              color: '#000'
+              return values
+            })))
+
+          setLayout({
+            ...StaticValues({ drawerOpen, width, height }),
+            xaxis: {
+              title: {
+                text: csvData.x[0].name,
+                font: {
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              },
             },
-          },
-          margin: {
-            l: 50,
-            r: 50,
-            b: 100,
-            t: 50,
-            pad: 4
-          },
-          title: {
-            font: {
-              size: 18
-            },
-            xref: 'paper',
-            x: 0.005,
-          },
-          xaxis: {
-            title: {
-              text: datas[0].find(j => j.axis === 'xaxis').name,
-              font: {
-                size: 18,
-                color: '#7f7f7f'
+            yaxis: {
+              title: {
+                text: csvData.y[0].name,
+                x: 0,
+                font: {
+                  size: 18,
+                  color: '#7f7f7f'
+                }
               }
             },
-          },
-          yaxis: {
-            title: {
-              text: datas[0].find(j => j.axis === 'yaxis').name,
-              x: 0,
-              font: {
-                size: 18,
-                color: '#7f7f7f'
-              }
+            yaxis2: {
+              title: csvData.y2[0]?.name,
+              overlaying: 'y',
+              side: 'right',
+              titlefont: { color: '#7f7f7f', size: 18 },
+              tickfont: { color: '#7f7f7f' },
             }
-          },
-          yaxis2: {
-            title: datas[0].find(j => j.axis === 'yaxis2')?.name,
-            overlaying: 'y',
-            side: 'right',
-            titlefont: { color: '#7f7f7f', size: 18 },
-            tickfont: { color: '#7f7f7f' },
-          }
-        })
+          })
+        } else {
+          setData([])
+          setLayout({})
+        }
+      } else {
+        setLayout(StaticValues)
       }
 
       // set config and layout

@@ -26,7 +26,7 @@ type GraftAction = {
     | IGraftImpedanceType
     | IStepBetweenPoints
     | boolean
-    | csvFileColum;
+    | csvFileColum[];
 };
 
 export const graftReducer = (
@@ -72,7 +72,7 @@ export const graftReducer = (
     case "setSelectedColumns":
       return {
         ...state,
-        csvFileColum: action.payload as csvFileColum,
+        csvFileColum: action.payload as csvFileColum[],
       };
     default:
       return state;
