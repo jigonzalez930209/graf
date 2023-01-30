@@ -18,7 +18,7 @@ const INITIAL_STATE: IGraftState = {
   impedanceType: 'Nyquist',
   stepBetweenPoints: 30,
   drawerOpen: true,
-  csvFileColum: null,
+  csvFileColum: [],
 }
 
 interface props {
@@ -46,7 +46,7 @@ export const GraftProvider = ({ children }: props) => {
 
   const setDrawerOpen = (open: boolean) => dispatch({ type: 'setDrawerOpen', payload: open })
 
-  const setSelectedColumns = (columns: csvFileColum) => dispatch({ type: 'setSelectedColumns', payload: columns })
+  const setSelectedColumns = (filesColumns: csvFileColum[]) => dispatch({ type: 'setSelectedColumns', payload: filesColumns })
 
   React.useEffect(() => {
     if (data?.find(file => file.selected)?.type) {
