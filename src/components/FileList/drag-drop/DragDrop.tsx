@@ -20,16 +20,21 @@ import Tooltip from "../../Tooltip";
 import { arrayMove, insertAtIndex, removeAtIndex } from "./utils/array";
 import Droppable from "./Droppable";
 import Item from "./Item";
+import { useData } from "../../../hooks/useData";
 
+export type droppableItem = {
+  index: number
+  name: string
+}
 export type ColumnsGroup = {
-  columns: string[]
-  yAxis: string[]
-  xAxis: string[]
-  y2Axis: string[]
+  columns: droppableItem[]
+  yAxis: droppableItem[]
+  xAxis: droppableItem[]
+  y2Axis: droppableItem[]
 }
 
 const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
-
+  const { data } = useData()
   const { graftState: { csvFileColum }, setSelectedColumns } = React.useContext(GrafContext);
 
   const { enqueueSnackbar } = useSnackbar()
@@ -40,7 +45,7 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
     xAxis: [],
     y2Axis: [],
   });
-  const [activeId, setActiveId] = React.useState(null);
+  const [activeId, setActiveId] = React.useState<string>(null);
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -102,66 +107,34 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
     }
 
     // One 'x' and various 'y'
-    if (itemGroups.xAxis.length === 1 && itemGroups.xAxis.length <= itemGroups.yAxis.length) {
+    if (itemGroups.xAxis.length === 1) {
 
       console.log('X axis have only one column the Y1 and Y2 columns could have more than one column');
       enqueueSnackbar('X axis have only one column the Y1 and Y2 columns could have more than one column', { variant: 'info', autoHideDuration: 10000 })
 
-      setSelectedColumns({
-        ...csvFileColum,
-        columns: csvFileColum.columns.map((column) => {
-          const axis = itemGroups.xAxis.includes(column.name) && 'xaxis'
-            || itemGroups.yAxis.includes(column.name) && 'yaxis'
-            || itemGroups.y2Axis.includes(column.name) && 'yaxis2'
-            || null
 
-          let axisGroup = !!axis ? 'oneX' : null
-          return {
-            ...column,
-            axis,
-            axisGroup,
-          }
-        }),
+    }
+    setSelectedColumns(
+      csvFileColum.map(csv => csv.fileName === data.find(d => d.selected).name ? ({
+        ...csv,
+        notSelected: itemGroups.columns.map((c) => ({
+          ...c
+        })),
+        x: itemGroups.xAxis.map((x) => ({
+          ...x
+        })),
+        y: itemGroups.yAxis.map((y) => ({
+          ...y
+        })),
+        y2: itemGroups.y2Axis.map((y2) => ({
+          ...y2
+        })),
+
 
       })
-      return;
-    }
-
-    // various 'x' and various 'y'
-    setSelectedColumns({
-      ...csvFileColum,
-      columns: csvFileColum.columns.map((column) => {
-        const axis = itemGroups.xAxis.includes(column.name) && 'xaxis'
-          || itemGroups.yAxis.includes(column.name) && 'yaxis'
-          || itemGroups.y2Axis.includes(column.name) && 'yaxis2'
-          || null
-
-        let axisGroup
-        if (axis === null) {
-          axisGroup = null
-        } else {
-          axisGroup = () => {
-            switch (axis) {
-              case 'xaxis':
-                return _.findIndex(itemGroups.xAxis, (name) => name === column.name)
-              case 'yaxis':
-                return _.findIndex(itemGroups.yAxis, (name) => name === column.name)
-              case 'yaxis2':
-                return _.findIndex(itemGroups.y2Axis, (name) => name === column.name)
-              default:
-                return null
-            }
-          }
-        }
-
-        return {
-          ...column,
-          axis,
-          axisGroup: axisGroup && axisGroup(),
-        }
-      }),
-
-    })
+        : csv
+      ))
+    return
   }
 
 
@@ -184,7 +157,6 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
           over.id in itemGroups
             ? itemGroups[overContainer].length + 1
             : over.data.current.sortable.index;
-
         setItemGroups((itemGroups) => {
           let newItems;
           if (activeContainer === overContainer) {
@@ -203,11 +175,9 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
               activeIndex,
               overContainer,
               overIndex,
-              active.id
+              { index: active.data.current.index, name: active.data.current.name }
             );
           }
-
-
           return newItems;
         });
       }
@@ -219,31 +189,32 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
   };
 
   const moveBetweenContainers = (
-    items,
-    activeContainer,
-    activeIndex,
-    overContainer,
-    overIndex,
-    item
+    items: ColumnsGroup,
+    activeContainer: string,
+    activeIndex: number,
+    overContainer: string,
+    overIndex: number,
+    item: droppableItem
   ) => {
     return {
       ...items,
-      [activeContainer]: _.uniq(removeAtIndex(items[activeContainer], activeIndex)),
-      [overContainer]: _.uniq(insertAtIndex(items[overContainer], overIndex, item)),
+      [activeContainer]: removeAtIndex(items[activeContainer], activeIndex),
+      [overContainer]: insertAtIndex(items[overContainer], overIndex, item),
     };
   };
 
   React.useEffect(() => {
-    if (csvFileColum?.columns?.length > 0) {
+    const fileColumns = csvFileColum.find((col) => col.fileName === data.find((d) => d.selected)?.name)
+    if (!_.isEmpty(fileColumns)) {
       setItemGroups({
-        columns: _.filter(csvFileColum?.columns, (col) => col.axisGroup === null).map((col) => col.name),
-        yAxis: _.sortBy(_.filter(csvFileColum?.columns, (col) => col.axis === 'yaxis'), ['axisGroup']).map((col) => col.name),
-        xAxis: _.sortBy(_.filter(csvFileColum?.columns, (col) => col.axis === 'xaxis'), ['axisGroup']).map((col) => col.name),
-        y2Axis: _.sortBy(_.filter(csvFileColum?.columns, (col) => col.axis === 'yaxis2'), ['axisGroup']).map((col) => col.name),
+        columns: fileColumns.notSelected.map((d) => ({ name: d.name, index: d.index })) || [],
+        xAxis: fileColumns.x?.map((d) => ({ name: d.name, index: d.index })) || [],
+        yAxis: fileColumns.y?.map((d) => ({ name: d.name, index: d.index })) || [],
+        y2Axis: fileColumns.y2?.map((d) => ({ name: d.name, index: d.index })) || [],
       })
     }
 
-  }, []);
+  }, [csvFileColum]);
 
   return (
     <DndContext
@@ -303,7 +274,7 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
           {PlotlyChart}
         </Grid>
       </Grid>
-      <DragOverlay>{activeId ? <Item id={activeId} isNotIndex index={0} dragOverlay /> : null}</DragOverlay>
+      <DragOverlay>{activeId ? <Item item={{ name: activeId, index: null }} isNotIndex index={0} dragOverlay /> : null}</DragOverlay>
 
     </DndContext>
   );

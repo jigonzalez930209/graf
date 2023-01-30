@@ -8,6 +8,7 @@ import { useScreen } from "usehooks-ts";
 import { GrafContext } from "../../../context/GraftContext";
 
 import SortableItem from "./SortableItem";
+import { droppableItem } from "./DragDrop";
 
 const useStyles = makeStyles({
   sortableContextContainer: {
@@ -66,7 +67,7 @@ const useStyles = makeStyles({
 
 type DroppableProps = {
   id: string,
-  items: string[],
+  items: droppableItem[],
   isHorizontal?: boolean,
   name: string,
   isNotIndex?: boolean,
@@ -119,7 +120,7 @@ const Droppable = ({ id, items, isHorizontal = false, name, isNotIndex = false }
 
         }}
       >
-        <SortableContext id={id} items={items} strategy={rectSortingStrategy}>
+        <SortableContext id={id} items={items.map(d => d.name)} strategy={rectSortingStrategy}>
           {items?.length > 0 ? (
             <div className={classes.sortableContextContainer}
               {...(isHorizontal && {
@@ -132,14 +133,14 @@ const Droppable = ({ id, items, isHorizontal = false, name, isNotIndex = false }
                   alignItems: 'center',
                 }
               })}>
-              {items.map((item, i) => (<React.Fragment key={item}>
+              {items.map((item, i) => (<React.Fragment key={item.name}>
                 {
                   (over?.data?.current?.sortable?.index === i &&
                     over?.data?.current?.sortable?.containerId === id) &&
                   <div className={classes.arrow}
                     style={{ display: isHorizontal ? 'block' : 'none' }} />
                 }
-                <SortableItem isNotIndex={isNotIndex} isHorizontal={isHorizontal} key={item} id={item} />
+                <SortableItem isNotIndex={isNotIndex} isHorizontal={isHorizontal} key={item.name} item={item} />
                 {(items.length - i <= 1 && over?.data?.current === undefined && over?.id === id) &&
                   <div className={classes.arrow} style={{ display: isHorizontal ? 'block' : 'none' }} />
                 }

@@ -21,44 +21,45 @@ export const useData = () => {
 
   const changeSelectedFile = (id: number) => {
     const file = data.find((file) => file.id === id)
-    if (file.type === fileType) {
-      if (file.type === 'csv') {
-        setData(prev => prev.map(file => ({ ...file, selected: file.id === id })))
-        if (_.isEmpty(csvFileColum) || csvFileColum.fileName !== file.name) setColumns(
-          {
-            id: file.id,
-            fileName: file.name,
-            columns: file.csv.columns.map((name, index) => ({
-              name,
-              index,
-              axis: null,
-              axisGroup: null,
-              color: null,
-            }))
-          }
-        )
-        return
-      }
+
+    if (file.type === 'csv') {
+      setSelectedFile('csv')
+      setData(prev => prev.map(file => ({ ...file, selected: file.id === id })))
+
+      if (csvFileColum?.length > 0 && _.isEmpty(csvFileColum.find((c) => file.name === c.fileName)))
+        setColumns([...csvFileColum, {
+          id: file.id,
+          fileName: file.name,
+          selected: file.selected,
+          notSelected: file.csv.columns.map((name, index) => ({
+            name,
+            index,
+          }))
+        }])
+
+      else if (csvFileColum?.length === 0)
+        setColumns([{
+          id: file.id,
+          fileName: file.name,
+          selected: file.selected,
+          notSelected: file.csv.columns.map((name, index) => ({
+            name,
+            index,
+          }))
+        }])
+
+      else
+        setColumns(csvFileColum.map((c) => ({
+          ...c,
+          selected: c.fileName === file.name,
+        })))
+
+    } else if (file.type === fileType) {
       setData(prev => prev.map(file => file.id === id ? { ...file, selected: !file.selected } : file))
-      return
+
     } else {
       setSelectedFile(file.type)
       setData(prev => prev.map(file => ({ ...file, selected: file.id === id })))
-      _.isEmpty(csvFileColum) && setColumns(
-        {
-          id: file.id,
-          fileName: file.name,
-          columns: file.csv.columns.map((name, index) => ({
-            name: name,
-            index: index,
-            selected: false,
-            axis: null,
-            axisGroup: null,
-            color: null,
-          }))
-        }
-      )
-      return
     }
   }
 
@@ -183,23 +184,27 @@ export const useData = () => {
   }
 
   const getCSVData = (cols: csvFileColum) => {
-    if (data === null) {
+    if (data === null || _.isEmpty(cols)) {
       return [];
     }
     const csvData = data.filter(file => file.selected).find((file) => file.type === 'csv')
 
     // group columns by axis
-    const columns = _.groupBy(cols?.columns, 'axisGroup')
+    const x = cols?.x
+    const y = cols?.y
+    const y2 = cols?.y2
 
-    let currentData = []
-    if (!_.isEmpty(columns?.oneX)) {
-      return columns.oneX.map((c) => ({ ...c, content: csvData.content.map((d) => d[c.index]) }))
-    }
+    if (_.isEmpty(x) && _.isEmpty(y)) return null
 
-    for (let i = 0; i < Object.entries(columns).length - 1; i++) {
-      try {
-        currentData.push(columns[i].map((c) => ({ ...c, content: csvData.content.map((d) => d[c.index]) })))
-      } catch (error) { console.log(error) }
+    let currentData
+
+    if (_.isEmpty(x) && _.isEmpty(y)) return null
+
+    currentData = {
+
+      x: x?.map((c) => ({ ...c, content: csvData.content.map((d) => d[c.index]) })),
+      y: y?.map((c) => ({ ...c, content: csvData.content.map((d) => d[c.index]) })),
+      y2: y2 && y2?.map((c) => ({ ...c, content: csvData.content.map((d) => d[c.index]) }))
     }
 
     return currentData

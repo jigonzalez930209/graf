@@ -4,8 +4,15 @@ import { CSS } from "@dnd-kit/utilities";
 import { Grid } from "@mui/material";
 
 import Item from "./Item";
+import { droppableItem } from "./DragDrop";
 
-const SortableItem = ({ id, isHorizontal, isNotIndex }) => {
+type SortableItemProps = {
+  item: droppableItem;
+  isHorizontal: boolean;
+  isNotIndex: boolean;
+}
+
+const SortableItem = ({ item, isHorizontal, isNotIndex }: SortableItemProps) => {
   const {
     attributes,
     listeners,
@@ -14,7 +21,7 @@ const SortableItem = ({ id, isHorizontal, isNotIndex }) => {
     transition,
     isDragging,
     index,
-  } = useSortable({ id });
+  } = useSortable({ id: item.name, data: item, });
 
   return (
     <Grid
@@ -28,7 +35,7 @@ const SortableItem = ({ id, isHorizontal, isNotIndex }) => {
       {...attributes}
       {...listeners}
     >
-      <Item isHorizontal={isHorizontal} id={id} dragOverlay={isDragging} isNotIndex={isNotIndex} index={index} />
+      <Item isHorizontal={isHorizontal} item={item} dragOverlay={isDragging} isNotIndex={isNotIndex} index={index} />
     </Grid>
   );
 };

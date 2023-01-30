@@ -2,8 +2,17 @@ import React from "react";
 import { Box } from "@mui/material";
 
 import { COLORS } from '../../../utils/utils'
+import { droppableItem } from "./DragDrop";
 
-const Item = ({ id: name, dragOverlay, index, isNotIndex = false, isHorizontal = false }) => {
+type ItemProps = {
+  item: droppableItem;
+  isHorizontal?: boolean;
+  isNotIndex?: boolean;
+  dragOverlay?: boolean;
+  index: number;
+}
+
+const Item = ({ item, dragOverlay, index, isNotIndex = false, isHorizontal = false }: ItemProps) => {
   return (
     <Box
       sx={{
@@ -25,7 +34,7 @@ const Item = ({ id: name, dragOverlay, index, isNotIndex = false, isHorizontal =
         color: (theme) => typeof index === 'number' && isHorizontal && theme.palette.getContrastText(COLORS[index]),
       }}
     >
-      {name}
+      {item.name}
     </Box>
   );
 };

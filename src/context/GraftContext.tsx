@@ -11,7 +11,7 @@ export type GrafContextProps = {
   setImpedanceType: (type: IGraftImpedanceType) => void;
   setStepBetweenPoints: (step: number) => void;
   setDrawerOpen: (open: boolean) => void;
-  setSelectedColumns: (columns: csvFileColum) => void;
+  setSelectedColumns: (columns: csvFileColum[]) => void;
 }
 
 
