@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "graf",
-    "version": "0.1.2"
+    "version": "0.1.3"
   },
   "tauri": {
     "allowlist": {
@@ -60,7 +60,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Graf 0.1.2",
+        "title": "Graf 0.1.3",
         "fileDropEnabled": true,
         "maximized": true
       }

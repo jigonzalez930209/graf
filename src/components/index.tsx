@@ -1,6 +1,6 @@
 import * as React from "react";
 import { listen } from '@tauri-apps/api/event'
-import { Backdrop } from "@mui/material";
+import { Backdrop, Button } from "@mui/material";
 import { useSnackbar } from "notistack";
 import * as _ from 'lodash';
 
@@ -14,7 +14,7 @@ import PlotlyChart from "./GrafContainer";
 import DragDrop from "./FileList/drag-drop/DragDrop";
 
 const Index: React.FC = () => {
-  const { updateData, data: Data } = useData();
+  const { updateData, data } = useData();
   const { setLoading, graftState: { loading, fileType } } = React.useContext(GrafContext);
 
   const { enqueueSnackbar } = useSnackbar()
@@ -51,7 +51,7 @@ const Index: React.FC = () => {
       }
       <AppBar
         readAllFiles={readFiles}
-        files={Data}
+        files={data}
         content={
           <div>
             {fileType === "csv"

@@ -8,23 +8,82 @@ import { csvFileColum, IStepBetweenPoints, ProcessFile } from '../interfaces/int
 
 export const useData = () => {
 
-  const [data, setData] = useLocalStorage<ProcessFile[]>('files', null)
-  const { graftState: { fileType, csvFileColum }, setSelectedFile, setSelectedColumns: setColumns } = React.useContext(GrafContext)
+  const { graftState: { fileType, csvFileColum, files }, setSelectedFile, setGraftType, setSelectedColumns: setColumns, setFiles } = React.useContext(GrafContext)
 
   const updateData = (payload: ProcessFile[]) => {
     if (payload?.length > 0) {
-      setData(payload)
+      setFiles(payload)
     } else {
-      setData([])
+      setFiles([])
     }
   };
 
+  const updateFileContent = ({ id, newSelectedIndex, fileName }: { id: number, fileName: string, newSelectedIndex: number }) => {
+    let file: ProcessFile
+
+    setFiles(
+      files.map(f => {
+
+        if (f.id === id) {
+          file = f
+          return {
+            ...f,
+            selectedInvariableContentIndex: newSelectedIndex,
+            content: _.slice(f.invariableContent, newSelectedIndex + 1, f.invariableContent.length),
+            csv: { columns: f.invariableContent[newSelectedIndex] }
+          }
+        }
+        else return f
+      }
+      )
+    )
+
+    setColumns(csvFileColum.length > 0
+      ? csvFileColum.find(c => c.id === id)?.fileName
+        ? csvFileColum.map(c => c.id === id
+          ? {
+            ...c,
+            x: [],
+            y: [],
+            y2: [],
+            notSelected: file.invariableContent[newSelectedIndex].map((name, index) => ({ name, index }))
+          }
+          : c
+        )
+        : ([...csvFileColum, {
+          id: id,
+          fileName: file.name,
+          selected: true,
+          x: [],
+          y: [],
+          y2: [],
+          notSelected: file.invariableContent[newSelectedIndex].map((name, index) => ({
+            name,
+            index,
+          }))
+        }])
+      : [{
+        id: id,
+        fileName: file.name,
+        selected: true,
+        x: [],
+        y: [],
+        y2: [],
+        notSelected: file.invariableContent[newSelectedIndex].map((name, index) => ({
+          name,
+          index,
+        }))
+      }]
+    )
+
+  }
+
   const changeSelectedFile = (id: number) => {
-    const file = data.find((file) => file.id === id)
+    const file = files.find((file) => file.id === id)
 
     if (file.type === 'csv') {
       setSelectedFile('csv')
-      setData(prev => prev.map(file => ({ ...file, selected: file.id === id })))
+      setFiles(files.map(file => ({ ...file, selected: file.id === id })))
 
       if (csvFileColum?.length > 0 && _.isEmpty(csvFileColum.find((c) => file.name === c.fileName)))
         setColumns([...csvFileColum, {
@@ -55,20 +114,20 @@ export const useData = () => {
         })))
 
     } else if (file.type === fileType) {
-      setData(prev => prev.map(file => file.id === id ? { ...file, selected: !file.selected } : file))
+      setFiles(files.map(file => file.id === id ? { ...file, selected: !file.selected } : file))
 
     } else {
       setSelectedFile(file.type)
-      setData(prev => prev.map(file => ({ ...file, selected: file.id === id })))
+      setFiles(files.map(file => ({ ...file, selected: file.id === id })))
     }
   }
 
   const getImpedanceData = () => {
-    if (data === null) {
+    if (files === null) {
       return [];
     }
 
-    return data.filter(file => file.selected).map((file) => (
+    return files.filter(file => file.selected).map((file) => (
       {
         ...file,
         content: file.content.map((c) => ([
@@ -80,10 +139,10 @@ export const useData = () => {
   }
 
   const getModuleFase = () => {
-    if (data === null) {
+    if (files === null) {
       return null;
     }
-    const impedanceData = data.filter(file => file.selected).map((file) => ({
+    const impedanceData = files.filter(file => file.selected).map((file) => ({
       ...file,
       content: file.content.map((c, i) => (
         {
@@ -120,7 +179,7 @@ export const useData = () => {
 
   const exportImpedanceDataToExcel = (columns: string[]) => {
     if (columns.length > 0) {
-      return data?.filter(f => f.selected).map((file, i) => {
+      return files?.filter(f => f.selected).map((file, i) => {
         return {
           name: file.name,
           value: file.content.map(c => columns.reduce((acc, curr) => ({ ...acc, [`${curr} (${i + 1})`]: calculateColumn(curr, c) }), {})),
@@ -134,7 +193,7 @@ export const useData = () => {
 
   const exportVoltammeterDataToExcel = (columns: string[]) => {
     if (columns.length > 0) {
-      return data?.filter(f => f.selected).map((file, i) => {
+      return files?.filter(f => f.selected).map((file, i) => {
         return {
           name: file.name,
           value: file.content.map((c, j) => columns.reduce((acc, curr) => ({
@@ -148,13 +207,18 @@ export const useData = () => {
     }
   }
 
-  const cleanData = () => setData(null)
+  const cleanData = () => {
+    setFiles(null);
+    setColumns(null);
+    setSelectedFile(null);
+    setGraftType(null);
+  }
 
   const getVCData = (stepBetweens: IStepBetweenPoints) => {
-    if (data === null) {
+    if (files === null) {
       return [];
     }
-    return data.map(file => ({ ...file, content: _.dropRight(file.content) })).filter(file => file.selected).map((file) => (
+    return files.map(file => ({ ...file, content: _.dropRight(file.content) })).filter(file => file.selected).map((file) => (
       {
         ...file,
         content: file.content.filter((c, i) => i % stepBetweens === 0).map((c) => [c[0], c[1]])
@@ -162,10 +226,10 @@ export const useData = () => {
   }
 
   const getZIZRvsFrequency = () => {
-    if (data === null) {
+    if (files === null) {
       return [];
     }
-    return data.filter(file => file.selected).map((file) => ({
+    return files.filter(file => file.selected).map((file) => ({
       ...file,
       content: file.content.map((c, i) => (
         {
@@ -184,10 +248,10 @@ export const useData = () => {
   }
 
   const getCSVData = (cols: csvFileColum) => {
-    if (data === null || _.isEmpty(cols)) {
+    if (files === null || _.isEmpty(cols)) {
       return [];
     }
-    const csvData = data.filter(file => file.selected).find((file) => file.type === 'csv')
+    const csvData = files.filter(file => file.selected).find((file) => file.type === 'csv')
 
     // group columns by axis
     const x = cols?.x
@@ -211,7 +275,7 @@ export const useData = () => {
   }
 
   return {
-    data,
+    data: files,
     updateData,
     cleanData,
     changeSelectedFile,
@@ -221,6 +285,7 @@ export const useData = () => {
     getVCData,
     getZIZRvsFrequency,
     getCSVData,
-    exportVoltammeterDataToExcel
+    exportVoltammeterDataToExcel,
+    updateFileContent,
   };
 };
