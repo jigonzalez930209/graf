@@ -11,6 +11,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { CssBaseline, Divider, Drawer } from '@mui/material';
 
 import FileList from '../FileList'
@@ -22,6 +23,7 @@ import Logs from '../LogsComponent';
 import { ProcessFile } from '../../interfaces/interfaces';
 import Tooltip from '../Tooltip';
 import styled from '@mui/material/styles/styled';
+import DataSelectorDialog from '../FileContent/DataSelect';
 
 const StyledToolbar = styled(Toolbar)(() => ({
   paddingTop: 0,
@@ -41,60 +43,89 @@ type BarProps = {
 
 const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
   const { cleanData } = useData()
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState<{ exp: boolean, dataSelect }>({ exp: false, dataSelect: false })
   const { graftState: { drawerOpen, fileType }, setDrawerOpen } = React.useContext(GrafContext)
   const [logsDrawerOpen, setLogsDrawerOpen] = React.useState(false)
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <ExportModal open={open} onClose={() => setOpen(false)} />
+      <ExportModal open={open.exp} onClose={() => setOpen(prev => ({ ...prev, exp: false }))} />
+      {fileType === 'csv' &&
+        <DataSelectorDialog
+          file={files?.find(f => f.selected)}
+          open={open.dataSelect}
+          onClose={() => setOpen(prev => ({ ...prev, dataSelect: false }))}
+        />
+      }
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, minHeight: 30 }}>
         <StyledToolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Tooltip title="Open & Close 'Drawer'" placement="bottom">
-            <IconButton
-              onClick={() => setDrawerOpen(!drawerOpen)}
-              color="inherit"
-              edge="start"
-              size="small"
-            >
-              {drawerOpen ? <ChevronLeftIcon fontSize='inherit' /> : <ChevronRightIcon fontSize='inherit' />}
-            </IconButton>
+            <span>
+              <IconButton
+                onClick={() => setDrawerOpen(!drawerOpen)}
+                color="inherit"
+                edge="start"
+                size="small"
+              >
+                {drawerOpen ? <ChevronLeftIcon fontSize='inherit' /> : <ChevronRightIcon fontSize='inherit' />}
+              </IconButton>
+            </span>
           </Tooltip>
           <Typography variant="h6" sx={{ fontSize: '15px' }} noWrap component="div">
-            Graf 0.1.2
+            Graf 0.1.3
           </Typography>
           <Box sx={{ alignSelf: 'center', justifySelf: 'end' }}>
             <Tooltip title="Open files" placement="bottom">
-              <IconButton
-                size="small"
-                color="inherit"
-                sx={{ marginRight: 2 }}
-                onClick={readAllFiles}
-              >
-                <FileOpenIcon fontSize='inherit' />
-              </IconButton>
+              <span>
+                <IconButton
+                  size="small"
+                  color="inherit"
+                  sx={{ marginRight: 1 }}
+                  onClick={readAllFiles}
+                >
+                  <FileOpenIcon fontSize='inherit' />
+                </IconButton>
+              </span>
             </Tooltip>
             <Tooltip title="Download file" placement="bottom">
-              <IconButton
-                size="small"
-                sx={{ marginRight: 2 }}
-                color={(files?.length > 0 || fileType === 'csv') ? 'inherit' : 'error'}
-                disabled={(files?.length < 1 || fileType === 'csv')}
-                onClick={() => setOpen(true)}
-              >
-                <SaveIcon fontSize='inherit' />
-              </IconButton>
+              <span>
+                <IconButton
+                  size="small"
+                  sx={{ marginRight: 1 }}
+                  color={(files?.length > 0 || fileType === 'csv') ? 'inherit' : 'error'}
+                  disabled={(files?.length < 1 || fileType === 'csv')}
+                  onClick={() => setOpen(prev => ({ ...prev, exp: true }))}
+                >
+                  <SaveIcon fontSize='inherit' />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Tooltip title="View the data contained in the selected file" placement="bottom">
+              <span>
+                <IconButton
+                  size="small"
+                  sx={{ marginRight: 1 }}
+                  color={files?.length > 0 ? 'inherit' : 'error'}
+                  disabled={fileType !== 'csv'}
+                  onClick={() => setOpen(prev => ({ ...prev, dataSelect: true }))}
+                >
+                  <DescriptionIcon fontSize='inherit' />
+                </IconButton>
+              </span>
             </Tooltip>
             <Tooltip title="Eliminate data cache" placement="bottom">
-              <IconButton
-                size="small"
-                color={files?.length > 0 ? 'inherit' : 'error'}
-                disabled={files?.length < 1}
-                onClick={() => cleanData()}
-              >
-                <ClearIcon fontSize='inherit' />
-              </IconButton>
+              <span>
+                <IconButton
+                  size="small"
+                  sx={{ marginRight: 1 }}
+                  color={files?.length > 0 ? 'inherit' : 'error'}
+                  disabled={!files?.length}
+                  onClick={async () => { await alert('All data wold be clean and all changes its wos lost '); cleanData() }}
+                >
+                  <ClearIcon fontSize='inherit' />
+                </IconButton>
+              </span>
             </Tooltip>
             <GraftHandlerPopper />
           </Box>
