@@ -4,6 +4,7 @@ import { read, utils, write } from 'xlsx';
 import _ from 'lodash'
 
 import { File, ProcessFile } from "../interfaces/interfaces";
+import { createSecureContext } from "tls";
 
 
 // const filters = [
@@ -112,6 +113,8 @@ const extractSerialPoint = (files: File[]): ProcessFile[] => {
         type: 'csv',
         name: element.name,
         content: files[i].content as string[][],
+        selectedInvariableContentIndex: files[i].selectedInvariableContentIndex,
+        invariableContent: files[i].invariableContent,
         selected: i === 0,
 
         csv: { columns: files[i].columns },
@@ -184,7 +187,27 @@ const readAll = async (AllFiles) => {
 
     if (fileType(name) === 'csv') {
       const contentXLSX = read(fileContents as number[], { type: 'array' });
-      return { content: Object.values(utils.sheet_to_json(contentXLSX.Sheets[contentXLSX.SheetNames[0]])).map(i => Object.values(i)), name, columns: Object.keys(utils.sheet_to_json(contentXLSX.Sheets[contentXLSX.SheetNames[0]])[0]) };
+      const content = Object.values(
+        utils.sheet_to_json(contentXLSX.Sheets[contentXLSX.SheetNames[0]])
+      ).map(i => Object.values(i))
+
+      const columns = Object.keys(utils.sheet_to_json(contentXLSX.Sheets[contentXLSX.SheetNames[0]])[0])
+      const invariableContent = [columns, ...content]
+
+      const selectedInvariableContentIndex = invariableContent.reduce(
+        (acc, curr, index) => curr.length > acc.value
+          ? { value: curr.length, index: index }
+          : acc,
+        { index: 0, value: content[0].length }
+      ).index
+
+      return {
+        content,
+        name,
+        invariableContent,
+        selectedInvariableContentIndex,
+        columns: invariableContent[selectedInvariableContentIndex]
+      };
     }
     return { content: await Utf8ArrayToStr(fileContents as number[]), name };
   }));
