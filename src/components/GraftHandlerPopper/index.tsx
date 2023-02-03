@@ -43,7 +43,7 @@ const GraftHandlerPopper = () => {
           size="small"
           color="inherit"
           sx={{ ml: 2 }}
-          onClick={handleClick}
+          onMouseEnter={handleClick}
         >
           <SettingsIcon fontSize='inherit' />
         </IconButton>
