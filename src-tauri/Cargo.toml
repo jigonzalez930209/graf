@@ -1,10 +1,10 @@
 [package]
-name = "graf1"
-version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+name = "graf"
+version = "0.1.3"
+description = "A Tauri App to create graphics and charts"
+authors = ["José Ivén Gonzélez Jorge <"]
+license = "MIT"
+repository = "https://github.com/jigonzalez930209/graf"
 edition = "2021"
 rust-version = "1.57"
 
@@ -17,6 +17,7 @@ tauri-build = {version = "1.2", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = {version = "1.2", features = ["api-all"] }
+tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 
 [features]
 # by default Tauri runs in production mode

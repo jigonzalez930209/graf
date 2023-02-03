@@ -1,18 +1,19 @@
-import { createContext } from "react";
-import { csvFileColum, IGraftImpedanceType, IGraftState, IGrafType, INotification } from '../interfaces/interfaces';
+import * as React from "react";
+import { csvFileColum, IGraftImpedanceType, IGraftState, IGrafType, INotification, ProcessFile, IFileType } from '../interfaces/interfaces';
 
 
 export type GrafContextProps = {
   graftState: IGraftState;
   setNotification: (notification: INotification) => void;
-  setSelectedFile: (selectedFileType: string) => void;
-  setLoading: (loading: boolean) => void;
+  setSelectedFile: (selectedFileType: IFileType) => void;
   setGraftType: (type: IGrafType) => void;
   setImpedanceType: (type: IGraftImpedanceType) => void;
   setStepBetweenPoints: (step: number) => void;
   setDrawerOpen: (open: boolean) => void;
   setSelectedColumns: (columns: csvFileColum[]) => void;
+  setFiles: (files: ProcessFile[]) => void;
+  setGraftState: (graftState: IGraftState) => void;
 }
 
 
-export const GrafContext = createContext<GrafContextProps>({} as GrafContextProps);
+export const GrafContext = React.createContext<GrafContextProps>({} as GrafContextProps);

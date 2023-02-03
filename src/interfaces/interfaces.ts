@@ -18,6 +18,7 @@ export interface IGraftState {
   stepBetweenPoints: IStepBetweenPoints;
   drawerOpen: boolean;
   csvFileColum: csvFileColum[];
+  files: ProcessFile[];
 }
 
 export type IGrafType = "line" | "scatter";
@@ -40,6 +41,8 @@ export type File = {
   content: string | string[][];
   selected: boolean;
   columns?: string[];
+  invariableContent?: string[][];
+  selectedInvariableContentIndex?: number;
 };
 
 export type ExportData = {
@@ -61,6 +64,8 @@ export type ProcessFile = {
   pointNumber?: number;
   content: string[][];
   selected: boolean;
+  invariableContent?: string[][];
+  selectedInvariableContentIndex?: number;
   impedance?: {
     V: number;
     signalAmplitude: number;

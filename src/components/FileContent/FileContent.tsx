@@ -11,8 +11,8 @@ type FileContentProp = {
 
 const FileContent: React.FC<FileContentProp> = ({ file }) => {
 
-  return (
-    <Table header={['t (s)', 'frequency', 'module ', 'face']} data={file.content} />
+  return (<></>
+    // <Table header={['t (s)', 'frequency', 'module ', 'face']} data={file.content} />
   )
 }
 

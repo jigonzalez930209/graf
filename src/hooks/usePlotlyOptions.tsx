@@ -7,7 +7,7 @@ import { COLORS } from '../utils/utils'
 
 import { useData } from './useData'
 
-const StaticValues = ({ drawerOpen, width, height }) => ({
+const StaticValues = ({ drawerOpen = true, width = 720, height = 540 }) => ({
   autosize: true,
   width: drawerOpen ? width * 0.72 : width * 0.876,
   height: drawerOpen ? height * 0.80 : height * 0.80,
@@ -372,7 +372,7 @@ const usePlotlyOptions = () => {
             })))
 
           setLayout({
-            ...StaticValues({ drawerOpen, width, height }),
+            ...StaticValues({ drawerOpen: drawerOpen, width: width, height: height }),
             xaxis: {
               title: {
                 text: csvData.x[0].name,
@@ -449,7 +449,7 @@ const usePlotlyOptions = () => {
             })))
 
           setLayout({
-            ...StaticValues({ drawerOpen, width, height }),
+            ...StaticValues({ drawerOpen: drawerOpen, width: width, height: height }),
             xaxis: {
               title: {
                 text: csvData.x[0].name,
@@ -482,7 +482,7 @@ const usePlotlyOptions = () => {
           setLayout({})
         }
       } else {
-        setLayout(StaticValues)
+        setLayout(StaticValues({ drawerOpen: drawerOpen, width: width, height: height }))
       }
 
       // set config and layout

@@ -12,10 +12,12 @@ import Loader from "./Loader/Loader";
 import AppBar from "./AppBar";
 import PlotlyChart from "./GrafContainer";
 import DragDrop from "./FileList/drag-drop/DragDrop";
+import { LoadingsContext } from "../context/Loading";
 
 const Index: React.FC = () => {
-  const { updateData, data: Data } = useData();
-  const { setLoading, graftState: { loading, fileType } } = React.useContext(GrafContext);
+  const { updateData, data } = useData();
+  const { graftState } = React.useContext(GrafContext);
+  const { loading: { loading }, setLoading } = React.useContext(LoadingsContext);
 
   const { enqueueSnackbar } = useSnackbar()
 
@@ -24,19 +26,20 @@ const Index: React.FC = () => {
     updateData(await readFilesUsingTauriProcess().finally(() => setLoading(false)))
   }
 
-  const handleChange = React.useCallback(async () => {
+  const handleFileDropChange = React.useCallback(async () => {
     listen('tauri://file-drop', async event => {
-      setLoading(true)
       const files = await readAllFiles(event.payload)
-      if (files.contents.length) updateData(await files.contents)
+      if (files.contents.length) {
+        setLoading(true)
+        updateData(await files.contents)
+        setLoading(false)
+      }
       if (files.notSupported.length) enqueueSnackbar(`Not supported files: ${files.notSupported.join(', ')}`, { variant: 'error' })
-
-      setLoading(false)
     })
   }, [loading])
 
   React.useEffect(() => {
-    handleChange()
+    handleFileDropChange()
   }, [])
 
   return (
@@ -51,10 +54,10 @@ const Index: React.FC = () => {
       }
       <AppBar
         readAllFiles={readFiles}
-        files={Data}
+        files={data}
         content={
           <div>
-            {fileType === "csv"
+            {graftState?.fileType === "csv"
               ? <DragDrop PlotlyChart={<PlotlyChart />} />
               : <PlotlyChart />
             }

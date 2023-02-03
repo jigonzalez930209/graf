@@ -204,13 +204,20 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
   };
 
   React.useEffect(() => {
-    const fileColumns = csvFileColum.find((col) => col.fileName === data.find((d) => d.selected)?.name)
+    const fileColumns = csvFileColum?.find((col) => col.fileName === data.find((d) => d.selected)?.name)
     if (!_.isEmpty(fileColumns)) {
       setItemGroups({
         columns: fileColumns.notSelected.map((d) => ({ name: d.name, index: d.index })) || [],
         xAxis: fileColumns.x?.map((d) => ({ name: d.name, index: d.index })) || [],
         yAxis: fileColumns.y?.map((d) => ({ name: d.name, index: d.index })) || [],
         y2Axis: fileColumns.y2?.map((d) => ({ name: d.name, index: d.index })) || [],
+      })
+    } else {
+      setItemGroups({
+        columns: [],
+        xAxis: [],
+        yAxis: [],
+        y2Axis: [],
       })
     }
 

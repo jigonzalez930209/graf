@@ -6,18 +6,20 @@ import {
   IGraftImpedanceType,
   IStepBetweenPoints,
   csvFileColum,
+  ProcessFile,
 } from "../interfaces/interfaces";
 
 type GraftAction = {
   type:
     | "setNotification"
     | "setFileType"
-    | "setLoading"
     | "setGraftType"
     | "setImpedanceType"
     | "setStepBetweenPoints"
     | "setDrawerOpen"
-    | "setSelectedColumns";
+    | "setSelectedColumns"
+    | "setFiles"
+    | "setGraftState";
   payload:
     | INotification
     | IFileType
@@ -26,7 +28,9 @@ type GraftAction = {
     | IGraftImpedanceType
     | IStepBetweenPoints
     | boolean
-    | csvFileColum[];
+    | csvFileColum[]
+    | ProcessFile[]
+    | IGraftState;
 };
 
 export const graftReducer = (
@@ -43,11 +47,6 @@ export const graftReducer = (
       return {
         ...state,
         fileType: action.payload as IFileType,
-      };
-    case "setLoading":
-      return {
-        ...state,
-        loading: action.payload as boolean,
       };
     case "setGraftType":
       return {
@@ -74,6 +73,18 @@ export const graftReducer = (
         ...state,
         csvFileColum: action.payload as csvFileColum[],
       };
+    case "setFiles":
+      return {
+        ...state,
+        files: action.payload as ProcessFile[],
+      };
+
+    case "setGraftState":
+      return {
+        ...state,
+        ...(action.payload as IGraftState),
+      };
+
     default:
       return state;
   }
