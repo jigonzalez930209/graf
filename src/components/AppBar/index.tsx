@@ -25,6 +25,8 @@ import Tooltip from '../Tooltip';
 import styled from '@mui/material/styles/styled';
 import DataSelectorDialog from '../FileContent/DataSelect';
 
+import ProjectHandler from './ProjectHandler';
+
 const StyledToolbar = styled(Toolbar)(() => ({
   paddingTop: 0,
   paddingBottom: 0,
@@ -73,7 +75,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
             </span>
           </Tooltip>
           <Typography variant="h6" sx={{ fontSize: '15px' }} noWrap component="div">
-            Graf 0.1.3
+            Graf 0.1.4
           </Typography>
           <Box sx={{ alignSelf: 'center', justifySelf: 'end' }}>
             <Tooltip title="Open files" placement="bottom">
@@ -88,6 +90,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
                 </IconButton>
               </span>
             </Tooltip>
+            <ProjectHandler />
             <Tooltip title="Download file" placement="bottom">
               <span>
                 <IconButton
