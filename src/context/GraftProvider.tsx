@@ -3,9 +3,8 @@ import * as React from 'react';
 import { GrafContext } from './GraftContext';
 import { IGraftState, INotification, IFileType, IGrafType, IGraftImpedanceType, IStepBetweenPoints, csvFileColum, ProcessFile } from '../interfaces/interfaces';
 import { graftReducer } from './graftReducer';
-import useLocalStorage from '../hooks/useLocalStorage';
 
-const INITIAL_STATE: IGraftState = {
+export const INITIAL_STATE: IGraftState = {
   notifications: {
     content: [''],
     title: '',
@@ -24,20 +23,16 @@ const INITIAL_STATE: IGraftState = {
 
 interface props {
   children: JSX.Element | JSX.Element[]
+  initialState: IGraftState
 }
 
-export const GraftProvider = ({ children }: props) => {
-
-  const [data] = useLocalStorage('files', null)
-
-  const [graftState, dispatch] = React.useReducer(graftReducer, INITIAL_STATE);
+export const GraftProvider = ({ children, initialState }: props) => {
+  const [graftState, dispatch] = React.useReducer(graftReducer, initialState);
 
   const setNotification = (notification: INotification) =>
     dispatch({ type: 'setNotification', payload: notification })
 
   const setSelectedFile = (selectedFileType: IFileType) => dispatch({ type: 'setFileType', payload: selectedFileType })
-
-  const setLoading = (loading: boolean) => dispatch({ type: 'setLoading', payload: loading })
 
   const setGraftType = (type: IGrafType) => dispatch({ type: 'setGraftType', payload: type })
 
@@ -49,25 +44,24 @@ export const GraftProvider = ({ children }: props) => {
 
   const setSelectedColumns = (filesColumns: csvFileColum[]) => dispatch({ type: 'setSelectedColumns', payload: filesColumns })
   const setFiles = (files: ProcessFile[]) => dispatch({ type: 'setFiles', payload: files })
+  const setGraftState = (graftState: IGraftState) => dispatch({ type: 'setGraftState', payload: graftState })
 
   React.useEffect(() => {
-    if (data?.find(file => file.selected)?.type) {
-      setSelectedFile(data.find(file => file.selected).type)
-    }
-  }, [])
+    setGraftState(initialState)
+  }, [initialState]);
 
   return (
     <GrafContext.Provider value={{
       graftState,
       setNotification,
       setSelectedFile,
-      setLoading,
       setGraftType,
       setImpedanceType,
       setStepBetweenPoints,
       setDrawerOpen,
       setSelectedColumns,
       setFiles,
+      setGraftState
     }}>
       {children}
     </GrafContext.Provider>
