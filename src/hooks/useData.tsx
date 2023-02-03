@@ -1,14 +1,13 @@
 import * as React from 'react'
 import _ from 'lodash'
 
-import useLocalStorage from './useLocalStorage'
 import { GrafContext } from '../context/GraftContext'
 import { csvFileColum, IStepBetweenPoints, ProcessFile } from '../interfaces/interfaces'
 
 
 export const useData = () => {
 
-  const { graftState: { fileType, csvFileColum, files }, setSelectedFile, setGraftType, setSelectedColumns: setColumns, setFiles } = React.useContext(GrafContext)
+  const { graftState, setSelectedFile, setGraftType, setSelectedColumns: setColumns, setFiles } = React.useContext(GrafContext)
 
   const updateData = (payload: ProcessFile[]) => {
     if (payload?.length > 0) {
@@ -22,7 +21,7 @@ export const useData = () => {
     let file: ProcessFile
 
     setFiles(
-      files.map(f => {
+      graftState.files.map(f => {
 
         if (f.id === id) {
           file = f
@@ -38,9 +37,9 @@ export const useData = () => {
       )
     )
 
-    setColumns(csvFileColum.length > 0
-      ? csvFileColum.find(c => c.id === id)?.fileName
-        ? csvFileColum.map(c => c.id === id
+    setColumns(graftState.csvFileColum.length > 0
+      ? graftState.csvFileColum.find(c => c.id === id)?.fileName
+        ? graftState.csvFileColum.map(c => c.id === id
           ? {
             ...c,
             x: [],
@@ -50,7 +49,7 @@ export const useData = () => {
           }
           : c
         )
-        : ([...csvFileColum, {
+        : ([...graftState.csvFileColum, {
           id: id,
           fileName: file.name,
           selected: true,
@@ -79,14 +78,14 @@ export const useData = () => {
   }
 
   const changeSelectedFile = (id: number) => {
-    const file = files.find((file) => file.id === id)
+    const file = graftState.files.find((file) => file.id === id)
 
     if (file.type === 'csv') {
       setSelectedFile('csv')
-      setFiles(files.map(file => ({ ...file, selected: file.id === id })))
+      setFiles(graftState.files.map(file => ({ ...file, selected: file.id === id })))
 
-      if (csvFileColum?.length > 0 && _.isEmpty(csvFileColum.find((c) => file.name === c.fileName)))
-        setColumns([...csvFileColum, {
+      if (graftState.csvFileColum?.length > 0 && _.isEmpty(graftState.csvFileColum.find((c) => file.name === c.fileName)))
+        setColumns([...graftState.csvFileColum, {
           id: file.id,
           fileName: file.name,
           selected: file.selected,
@@ -96,7 +95,7 @@ export const useData = () => {
           }))
         }])
 
-      else if (csvFileColum?.length === 0)
+      else if (graftState.csvFileColum?.length === 0)
         setColumns([{
           id: file.id,
           fileName: file.name,
@@ -108,26 +107,26 @@ export const useData = () => {
         }])
 
       else
-        setColumns(csvFileColum.map((c) => ({
+        setColumns(graftState.csvFileColum.map((c) => ({
           ...c,
           selected: c.fileName === file.name,
         })))
 
-    } else if (file.type === fileType) {
-      setFiles(files.map(file => file.id === id ? { ...file, selected: !file.selected } : file))
+    } else if (file.type === graftState.fileType) {
+      setFiles(graftState.files.map(file => file.id === id ? { ...file, selected: !file.selected } : file))
 
     } else {
       setSelectedFile(file.type)
-      setFiles(files.map(file => ({ ...file, selected: file.id === id })))
+      setFiles(graftState.files.map(file => ({ ...file, selected: file.id === id })))
     }
   }
 
   const getImpedanceData = () => {
-    if (files === null) {
+    if (graftState.files === null) {
       return [];
     }
 
-    return files.filter(file => file.selected).map((file) => (
+    return graftState.files.filter(file => file.selected).map((file) => (
       {
         ...file,
         content: file.content.map((c) => ([
@@ -139,10 +138,10 @@ export const useData = () => {
   }
 
   const getModuleFase = () => {
-    if (files === null) {
+    if (graftState.files === null) {
       return null;
     }
-    const impedanceData = files.filter(file => file.selected).map((file) => ({
+    const impedanceData = graftState.files.filter(file => file.selected).map((file) => ({
       ...file,
       content: file.content.map((c, i) => (
         {
@@ -179,7 +178,7 @@ export const useData = () => {
 
   const exportImpedanceDataToExcel = (columns: string[]) => {
     if (columns.length > 0) {
-      return files?.filter(f => f.selected).map((file, i) => {
+      return graftState.files?.filter(f => f.selected).map((file, i) => {
         return {
           name: file.name,
           value: file.content.map(c => columns.reduce((acc, curr) => ({ ...acc, [`${curr} (${i + 1})`]: calculateColumn(curr, c) }), {})),
@@ -193,7 +192,7 @@ export const useData = () => {
 
   const exportVoltammeterDataToExcel = (columns: string[]) => {
     if (columns.length > 0) {
-      return files?.filter(f => f.selected).map((file, i) => {
+      return graftState.files?.filter(f => f.selected).map((file, i) => {
         return {
           name: file.name,
           value: file.content.map((c, j) => columns.reduce((acc, curr) => ({
@@ -215,10 +214,10 @@ export const useData = () => {
   }
 
   const getVCData = (stepBetweens: IStepBetweenPoints) => {
-    if (files === null) {
+    if (graftState.files === null) {
       return [];
     }
-    return files.map(file => ({ ...file, content: _.dropRight(file.content) })).filter(file => file.selected).map((file) => (
+    return graftState.files.map(file => ({ ...file, content: _.dropRight(file.content) })).filter(file => file.selected).map((file) => (
       {
         ...file,
         content: file.content.filter((c, i) => i % stepBetweens === 0).map((c) => [c[0], c[1]])
@@ -226,10 +225,10 @@ export const useData = () => {
   }
 
   const getZIZRvsFrequency = () => {
-    if (files === null) {
+    if (graftState.files === null) {
       return [];
     }
-    return files.filter(file => file.selected).map((file) => ({
+    return graftState.files.filter(file => file.selected).map((file) => ({
       ...file,
       content: file.content.map((c, i) => (
         {
@@ -248,10 +247,10 @@ export const useData = () => {
   }
 
   const getCSVData = (cols: csvFileColum) => {
-    if (files === null || _.isEmpty(cols)) {
+    if (graftState.files === null || _.isEmpty(cols)) {
       return [];
     }
-    const csvData = files.filter(file => file.selected).find((file) => file.type === 'csv')
+    const csvData = graftState.files.filter(file => file.selected).find((file) => file.type === 'csv')
 
     // group columns by axis
     const x = cols?.x
@@ -274,8 +273,10 @@ export const useData = () => {
     return currentData
   }
 
+
+
   return {
-    data: files,
+    data: graftState?.files,
     updateData,
     cleanData,
     changeSelectedFile,
