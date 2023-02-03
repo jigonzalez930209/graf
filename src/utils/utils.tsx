@@ -3,9 +3,75 @@ import { open, save } from '@tauri-apps/api/dialog';
 import { read, utils, write } from 'xlsx';
 import _ from 'lodash'
 
-import { File, ProcessFile } from "../interfaces/interfaces";
+import { File, ProcessFile, IGraftState } from "../interfaces/interfaces";
 import { createSecureContext } from "tls";
 
+import { Store } from "tauri-plugin-store-api";
+
+
+const initStorage = async () => {
+  const store = new Store(".settings.dat");
+
+  if ((await store.values()).length > 0 && !_.isEmpty(await store.get('files'))) {
+    return (await store.get('files').then((f) => f as ProcessFile[]))
+  }
+  return [] as ProcessFile[]
+}
+
+const saveStorage = async (files: ProcessFile[], path: string) => {
+  const store = new Store(path ? path : "current.graft");
+  await store.set('files', files)
+}
+
+const openProject = async () => {
+  let notification: { message: string, variant: 'success' | 'error' }
+  let data: IGraftState
+  try {
+    const p = await open({
+      title: "Open Project",
+      multiple: false,
+      directory: false,
+      filters: [{ name: "Graft Project", extensions: ["graft"] }]
+    });
+
+    const store = new Store(p.toString());
+    data = await store.get('graft').then(d => d as IGraftState).catch(err => err)
+    notification = { message: 'Project opened successfully', variant: 'success' }
+
+  } catch (err) {
+    console.log(err)
+    notification = { message: 'Project not saved. Error occurred while saving', variant: 'error' }
+  } finally {
+    return { data, notification }
+  }
+}
+
+const clearStorage = async () => {
+  const store = new Store(".settings.dat");
+  await store.clear()
+}
+
+const saveProject = async (s: IGraftState) => {
+  let notification: { message: string, variant: 'success' | 'error' }
+  try {
+
+    const p = await save({
+      title: "Save Project",
+      filters: [{ name: 'Graft project', extensions: ['graft'] }]
+    });
+
+    const store = new Store(p);
+    await store.set('graft', s)
+    await store.save()
+    notification = { message: 'Project saved successfully', variant: 'success' }
+  } catch (err) {
+    console.log(err)
+    notification = { message: 'Project not saved. Error occurred while saving', variant: 'error' }
+  } finally {
+    return notification
+  }
+
+}
 
 // const filters = [
 //   { name: "Excel Binary Workbook", extensions: ["xlsb"] },
@@ -279,11 +345,16 @@ const COLUMNS_VOLTAMETER = [
 ]
 
 export {
+  initStorage,
   extractSerialPoint,
   fileType,
   Utf8ArrayToStr,
   readFilesUsingTauriProcess,
   readAllFiles,
+  saveStorage,
+  saveProject,
+  clearStorage,
+  openProject,
   COLORS,
   COLUMNS_IMPEDANCE,
   COLUMNS_VOLTAMETER
