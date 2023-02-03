@@ -41,6 +41,7 @@
     "react-xls": "^0.1.1",
     "sortablejs": "^1.15.0",
     "styled-components": "^5.3.3",
+    "tauri-plugin-store-api": "https://github.com/tauri-apps/tauri-plugin-store",
     "typescript": "^4.9.3",
     "usehooks-ts": "^2.7.2",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.1/xlsx-0.19.1.tgz"
