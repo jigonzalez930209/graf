@@ -1,7 +1,13 @@
-import Markdown from 'markdown-to-jsx';
-import * as React from 'react';
-import Code from './Code';
 
+import * as React from 'react';
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import remarkSlug from 'remark-slug'
+import remarkToc from 'remark-toc'
+import rehypeHighlight from 'rehype-highlight'
+import rehypeKatex from 'rehype-katex'
+import rehypeRaw from 'rehype-raw'
+import './style-md.css'
 
 const MdText = ({ style, mdPath }) => {
   const [text, setText] = React.useState<string>('');
@@ -15,21 +21,15 @@ const MdText = ({ style, mdPath }) => {
 
 
   return (
-    <Markdown
-      options={{
-        overrides: {
-          Code: {
-            component: Code,
-            props: {
-              isDark,
-              setIsDark
-            }
-          }
-        }
-      }}
+    <ReactMarkdown
+      className="markdown-body"
+      remarkPlugins={[remarkGfm, remarkSlug, remarkToc]}
+      rehypePlugins={[rehypeRaw, rehypeHighlight, rehypeKatex]}
+      components={{}}
+    // rehypePlugins={[rehypeKatex]}
     >
       {text}
-    </Markdown>
+    </ReactMarkdown>
   );
 };
 
