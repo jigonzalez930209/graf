@@ -1,20 +1,8 @@
 import * as React from 'react';
-import fs from 'fs';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import ListItemText from '@mui/material/ListItemText';
-import ListItem from '@mui/material/ListItem';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
-import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import HelpIcon from '@mui/icons-material/Help';
-import Drawer from '@mui/material/Drawer';
+import { Dialog, Divider, AppBar, Toolbar, IconButton, Typography, Slide, Drawer } from '@mui/material';
 import { styled } from '@mui/styles';
 import ListHelpItems from './components/ListHelpItems';
 import MdText from './components/Text';
@@ -33,7 +21,7 @@ const StyledToolbar = styled(Toolbar)(() => ({
   paddingBottom: 0,
   // Override media queries injected by theme.mixins.toolbar
   '@media all': {
-    height: 30,
+    minHeight: 35,
   },
 }));
 
@@ -67,25 +55,27 @@ export default function FullScreenDialog() {
     content: 'not contente',
     selected: true,
     file: 'home.md'
-  }, {
-    id: 2,
-    title: 'File Handler',
-    content: 'not contente',
-    selected: false,
-    file: 'file-handler.md'
-  }, {
-    id: 3,
-    title: 'Plot Area',
-    content: 'not contente',
-    selected: false,
-    file: 'plot-area.md'
-  }, {
-    id: 4,
-    title: 'Utilities',
-    content: 'not contente',
-    selected: false,
-    file: 'utilities.md'
-  }])
+  },
+    // {
+    //   id: 2,
+    //   title: 'File Handler',
+    //   content: 'not contente',
+    //   selected: false,
+    //   file: 'file-handler.md'
+    // }, {
+    //   id: 3,
+    //   title: 'Plot Area',
+    //   content: 'not contente',
+    //   selected: false,
+    //   file: 'plot-area.md'
+    // }, {
+    //   id: 4,
+    //   title: 'Utilities',
+    //   content: 'not contente',
+    //   selected: false,
+    //   file: 'utilities.md',
+    // }
+  ])
 
 
   return (
@@ -105,8 +95,15 @@ export default function FullScreenDialog() {
         TransitionComponent={Transition}
         sx={{ zIndex: ({ zIndex }) => zIndex.tooltip + 1, }}
       >
-        <AppBar sx={{ position: 'fixed', zIndex: ({ zIndex }) => zIndex.drawer + 1, w: '35px' }}>
-          <StyledToolbar>
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, minHeight: 35 }}>
+          <Toolbar sx={{
+            paddingTop: 0,
+            paddingBottom: 0,
+            '@media all': {
+              minHeight: 35,
+            }
+          }}
+          >
             <Typography sx={{ ml: 2, flex: 1, alignSelf: 'center' }} variant="h6" component="div">
               Help
             </Typography>
@@ -119,22 +116,21 @@ export default function FullScreenDialog() {
             >
               <CloseIcon />
             </IconButton>
-          </StyledToolbar>
+          </Toolbar>
         </AppBar>
         <Drawer
           variant="permanent"
           sx={{
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: '250px' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: '250px' }
           }}
           open
         >
-          <StyledToolbar />
           <ListHelpItems items={items} onChange={handleChange} />
           <Divider />
           <Divider />
 
         </Drawer>
-        <div style={{ marginLeft: 260, marginTop: 40 }}>
+        <div style={{ marginLeft: 260, marginTop: 40, marginBottom: 20 }}>
           <MdText style mdPath={items.find(f => f.selected).file} />
         </div>
       </Dialog>
