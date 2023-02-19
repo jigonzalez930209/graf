@@ -7,10 +7,28 @@ import { csvFileColum, IStepBetweenPoints, ProcessFile } from '../interfaces/int
 
 export const useData = () => {
 
-  const { graftState, setSelectedFile, setGraftType, setSelectedColumns: setColumns, setFiles } = React.useContext(GrafContext)
+  const { graftState, setSelectedFile, setGraftType, setSelectedColumns: setColumns, setFiles, updateFile, updateCSVfileColumn } = React.useContext(GrafContext)
 
-  const updateData = (payload: ProcessFile[]) => {
+  const setData = (payload: ProcessFile[]) => {
+    setColumns([])
     if (payload?.length > 0) {
+      let columns: csvFileColum[] = []
+      payload.forEach((file) => {
+        if (file.type === 'csv') {
+          columns.push(
+            {
+              id: file.id,
+              fileName: file.name,
+              selected: file.selected,
+              notSelected: file.csv.columns.map((name, index) => ({ name, index })),
+              x: [],
+              y: [],
+              y2: []
+            }
+          )
+        }
+      })
+      setColumns(columns)
       setFiles(payload)
     } else {
       setFiles([])
@@ -18,62 +36,27 @@ export const useData = () => {
   };
 
   const updateFileContent = ({ id, newSelectedIndex, fileName }: { id: number, fileName: string, newSelectedIndex: number }) => {
-    let file: ProcessFile
 
-    setFiles(
-      graftState.files.map(f => {
+    const selectedFile = graftState.files.find((file) => file.id === id)
+    const selectedColumn = graftState.csvFileColum.find((c) => c.fileName === fileName)
 
-        if (f.id === id) {
-          file = f
-          return {
-            ...f,
-            selectedInvariableContentIndex: newSelectedIndex,
-            content: _.slice(f.invariableContent, newSelectedIndex + 1, f.invariableContent.length),
-            csv: { columns: f.invariableContent[newSelectedIndex] }
-          }
-        }
-        else return f
-      }
-      )
-    )
+    const notSelected = selectedFile.invariableContent[newSelectedIndex].map((val, index) => ({ name: val, index }))
 
-    setColumns(graftState.csvFileColum.length > 0
-      ? graftState.csvFileColum.find(c => c.id === id)?.fileName
-        ? graftState.csvFileColum.map(c => c.id === id
-          ? {
-            ...c,
-            x: [],
-            y: [],
-            y2: [],
-            notSelected: file.invariableContent[newSelectedIndex].map((name, index) => ({ name, index }))
-          }
-          : c
-        )
-        : ([...graftState.csvFileColum, {
-          id: id,
-          fileName: file.name,
-          selected: true,
-          x: [],
-          y: [],
-          y2: [],
-          notSelected: file.invariableContent[newSelectedIndex].map((name, index) => ({
-            name,
-            index,
-          }))
-        }])
-      : [{
-        id: id,
-        fileName: file.name,
-        selected: true,
-        x: [],
-        y: [],
-        y2: [],
-        notSelected: file.invariableContent[newSelectedIndex].map((name, index) => ({
-          name,
-          index,
-        }))
-      }]
-    )
+    updateFile({
+      ...selectedFile,
+      selectedInvariableContentIndex: newSelectedIndex,
+      content: _.slice(selectedFile.invariableContent, newSelectedIndex + 1, selectedFile.invariableContent.length),
+      csv: { columns: selectedFile.invariableContent[newSelectedIndex] }
+    })
+    console.log(selectedColumn)
+    updateCSVfileColumn({
+      ...selectedColumn,
+      notSelected,
+      x: [],
+      y: [],
+      y2: []
+
+    })
 
   }
 
@@ -83,34 +66,7 @@ export const useData = () => {
     if (file.type === 'csv') {
       setSelectedFile('csv')
       setFiles(graftState.files.map(file => ({ ...file, selected: file.id === id })))
-
-      if (graftState.csvFileColum?.length > 0 && _.isEmpty(graftState.csvFileColum.find((c) => file.name === c.fileName)))
-        setColumns([...graftState.csvFileColum, {
-          id: file.id,
-          fileName: file.name,
-          selected: file.selected,
-          notSelected: file.csv.columns.map((name, index) => ({
-            name,
-            index,
-          }))
-        }])
-
-      else if (graftState.csvFileColum?.length === 0)
-        setColumns([{
-          id: file.id,
-          fileName: file.name,
-          selected: file.selected,
-          notSelected: file.csv.columns.map((name, index) => ({
-            name,
-            index,
-          }))
-        }])
-
-      else
-        setColumns(graftState.csvFileColum.map((c) => ({
-          ...c,
-          selected: c.fileName === file.name,
-        })))
+      setColumns(graftState.csvFileColum.map((c) => ({ ...c, selected: c.fileName === file.name })))
 
     } else if (file.type === graftState.fileType) {
       setFiles(graftState.files.map(file => file.id === id ? { ...file, selected: !file.selected } : file))
@@ -277,7 +233,7 @@ export const useData = () => {
 
   return {
     data: graftState?.files,
-    updateData,
+    updateData: setData,
     cleanData,
     changeSelectedFile,
     getImpedanceData,
