@@ -58,7 +58,7 @@ const DataSelectorDialog = ({ file, open, onClose }: DataSelectorProps) => {
             Select where is columns name row and where is data start row.{' '}
             <b>By default, the algorithm select a row will take the values of the column names.</b>
           </Box>
-          <Box sx={{ px: 1 }}>Row selected: {selectedRow} {'   '} Rows inView: {25}</Box>
+          <Box sx={{ px: 1 }}>Row selected: {selectedRow + 1} {'   '} Rows inView: {25}</Box>
           <Box
             component="div"
             sx={{
