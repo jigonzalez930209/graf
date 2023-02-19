@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { List, ListSubheader, ListItem, ListItemButton, Box } from '@mui/material';
+import { List, ListItem, ListItemButton, Box } from '@mui/material';
 
 export type ListHelpItemsProps = {
   items: {
@@ -18,7 +18,7 @@ const ListHelpItems = ({ items, onChange }: ListHelpItemsProps) => {
   }
   return (
     <List
-      sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', m: 0, p: 0 }}
+      sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', mt: 6, p: 0 }}
     >
       {items.map((item, index) => (
         <ListItem
@@ -26,9 +26,17 @@ const ListHelpItems = ({ items, onChange }: ListHelpItemsProps) => {
           disablePadding
           sx={{ padding: 0, margin: 0 }}
         >
-          <ListItemButton role={undefined} dense sx={{ bgcolor: item.selected ? 'aliceblue' : '' }} onClick={() => handleChange(item)}>
+          <ListItemButton
+            role={undefined}
+            dense
+            sx={{
+              bgcolor: item.selected ? '#376a8a' : '#fff',
+              color: ({ palette }) => palette.getContrastText(item.selected ? '#376a8a' : '#fff'),
+              '&:hover, &.Mui-focusVisible': {
+                bgcolor: item.selected ? '#376a8a' : '#fff',
+              }
+            }} onClick={() => handleChange(item)}>
             <Box>{item.title}</Box>
-
           </ListItemButton>
         </ListItem>
       ))}
