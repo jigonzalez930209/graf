@@ -107,13 +107,12 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
     }
 
     // One 'x' and various 'y'
-    if (itemGroups.xAxis.length === 1) {
+    // if (itemGroups.xAxis.length === 1) {
 
-      console.log('X axis have only one column the Y1 and Y2 columns could have more than one column');
-      enqueueSnackbar('X axis have only one column the Y1 and Y2 columns could have more than one column', { variant: 'info', autoHideDuration: 10000 })
+    //   console.log('X axis have only one column the Y1 and Y2 columns could have more than one column');
+    //   enqueueSnackbar('X axis have only one column the Y1 and Y2 columns could have more than one column', { variant: 'info', autoHideDuration: 10000 })
+    // }
 
-
-    }
     setSelectedColumns(
       csvFileColum.map(csv => csv.fileName === data.find(d => d.selected).name ? ({
         ...csv,
@@ -129,14 +128,11 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
         y2: itemGroups.y2Axis.map((y2) => ({
           ...y2
         })),
-
-
       })
         : csv
       ))
     return
   }
-
 
   const handleDragStart = ({ active }) => setActiveId(active.id);
 
@@ -204,14 +200,23 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
   };
 
   React.useEffect(() => {
-    const fileColumns = csvFileColum?.find((col) => col.fileName === data.find((d) => d.selected)?.name)
+    const fileColumns = csvFileColum?.find(c => c.selected)
+    setItemGroups({
+      columns: [],
+      xAxis: [],
+      yAxis: [],
+      y2Axis: [],
+    })
+
     if (!_.isEmpty(fileColumns)) {
-      setItemGroups({
-        columns: fileColumns.notSelected.map((d) => ({ name: d.name, index: d.index })) || [],
-        xAxis: fileColumns.x?.map((d) => ({ name: d.name, index: d.index })) || [],
-        yAxis: fileColumns.y?.map((d) => ({ name: d.name, index: d.index })) || [],
-        y2Axis: fileColumns.y2?.map((d) => ({ name: d.name, index: d.index })) || [],
-      })
+      setTimeout(() => {
+        setItemGroups({
+          columns: fileColumns.notSelected || [],
+          xAxis: fileColumns.x?.map((d) => ({ name: d.name, index: d.index })) || [],
+          yAxis: fileColumns.y?.map((d) => ({ name: d.name, index: d.index })) || [],
+          y2Axis: fileColumns.y2?.map((d) => ({ name: d.name, index: d.index })) || [],
+        })
+      }, 1)
     } else {
       setItemGroups({
         columns: [],
@@ -252,7 +257,7 @@ const DragDrop = ({ PlotlyChart }: { PlotlyChart: JSX.Element }) => {
       <Grid display='flex' >
         <Droppable
           id='columns'
-          items={itemGroups['columns']}
+          items={itemGroups['columns'].length > 0 ? itemGroups['columns'] : []}
           name='Columns'
           isNotIndex
         />
