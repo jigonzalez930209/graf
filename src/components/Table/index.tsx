@@ -22,12 +22,12 @@ const DenseTable: React.FC<TableProps> = ({ header, file, truncateIn = 50, onSel
   const handleSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedValue(parseInt(event.target.value));
 
-    onSelectChange(parseInt(event.target.value) + 1)
+    onSelectChange(parseInt(event.target.value))
   }
 
   React.useEffect(() => {
     setCurrentData(file.invariableContent.slice(0, truncateIn))
-    onSelectChange(selectedValue + 1)
+    onSelectChange(selectedValue)
   }, [truncateIn])
 
   return (

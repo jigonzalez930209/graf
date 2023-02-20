@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { IconButton, InputLabel, MenuItem, Paper, Popover, Select, Box, Grid, Typography, Slider } from '@mui/material';
+import { IconButton } from '@mui/material';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
-import BookIcon from '@mui/icons-material/Book';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
 import Tooltip from '../Tooltip';
 import { openProject, saveProject } from '../../utils/utils';
 import { GrafContext } from '../../context/GraftContext';
 import { useSnackbar } from 'notistack';
-import { INITIAL_STATE } from '../../context/GraftProvider';
 import { LoadingsContext } from '../../context/Loading';
 
 
@@ -33,26 +31,30 @@ const ProjectHandler = () => {
   return (
     <>
       <Tooltip title='Open saved project'>
-        <IconButton
-          size='small'
-          color='inherit'
-          sx={{ mr: 1 }}
-          onClick={open}
-        >
-          <OpenInBrowserIcon fontSize='small' />
-        </IconButton>
+        <span>
+          <IconButton
+            size='small'
+            color='inherit'
+            sx={{ mr: 1 }}
+            onClick={open}
+          >
+            <OpenInBrowserIcon fontSize='small' />
+          </IconButton>
+        </span>
       </Tooltip>
       <Tooltip title='Save a current project'>
-        <IconButton
-          size='small'
-          color='inherit'
-          sx={{ mr: 1 }}
-          onClick={save}
-        >
-          <SaveAltIcon fontSize='small' />
-        </IconButton>
+        <span>
+          <IconButton
+            size='small'
+            color='inherit'
+            sx={{ mr: 1 }}
+            onClick={save}
+            disabled={graftState?.files?.length === 0}
+          >
+            <SaveAltIcon fontSize='small' />
+          </IconButton>
+        </span>
       </Tooltip>
-
     </>
   )
 }

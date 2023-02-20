@@ -13,6 +13,7 @@ const Tooltip = styled(({ className, ...props }: TooltipProps) => (
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: theme.palette.common.black,
   },
+  zIndex: theme.zIndex.tooltip - 1,
 }));
 
 export default Tooltip;

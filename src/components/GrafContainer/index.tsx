@@ -6,7 +6,7 @@ import usePlotlyOptions from '../../hooks/usePlotlyOptions';
 
 const PlotlyChart = () => {
   const { data, layout, config } = usePlotlyOptions()
-  const { graftState: { fileType } } = React.useContext(GrafContext)
+  const { graftState: { fileType, files } } = React.useContext(GrafContext)
   const [zoomState, setZoomState] = React.useState<{ xRange: number[], yRange: number[], y1Range?: number[] }>(null)
 
   React.useEffect(() => {
@@ -22,7 +22,16 @@ const PlotlyChart = () => {
         yaxis: { ...layout?.yaxis, range: zoomState?.yRange },
         ...(layout?.yaxis2 && { yaxis2: { ...layout?.yaxis2, range: zoomState?.y1Range } })
       }}
-      config={config}
+      config={{
+        ...config,
+        toImageButtonOptions: {
+          format: 'svg', // one of png, svg, jpeg, webp
+          filename: files?.length > 0 ? files.find(({ selected }) => selected)?.name : 'graft',
+          height: 500,
+          width: 700,
+          scale: 1, // Multiply title/legend/axis/canvas sizes by this factor
+        }
+      }}
       onRelayout={(e) => {
         if (typeof e['xaxis.range[0]'] === 'number') {
           setZoomState({

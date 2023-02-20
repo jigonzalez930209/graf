@@ -46,6 +46,10 @@ export const GraftProvider = ({ children, initialState }: props) => {
   const setFiles = (files: ProcessFile[]) => dispatch({ type: 'setFiles', payload: files })
   const setGraftState = (graftState: IGraftState) => dispatch({ type: 'setGraftState', payload: graftState })
 
+  const updateFile = (file: ProcessFile) => dispatch({ type: 'updateFile', payload: file })
+
+  const updateCSVfileColumn = (csvFileColum: csvFileColum) => dispatch({ type: 'updateCSVfileColumn', payload: csvFileColum })
+
   React.useEffect(() => {
     setGraftState(initialState)
   }, [initialState]);
@@ -61,6 +65,8 @@ export const GraftProvider = ({ children, initialState }: props) => {
       setDrawerOpen,
       setSelectedColumns,
       setFiles,
+      updateFile,
+      updateCSVfileColumn,
       setGraftState
     }}>
       {children}

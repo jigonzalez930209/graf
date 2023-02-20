@@ -26,6 +26,7 @@ import styled from '@mui/material/styles/styled';
 import DataSelectorDialog from '../FileContent/DataSelect';
 
 import ProjectHandler from './ProjectHandler';
+import { HelpDialog } from '../Help';
 
 const StyledToolbar = styled(Toolbar)(() => ({
   paddingTop: 0,
@@ -131,6 +132,12 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
               </span>
             </Tooltip>
             <GraftHandlerPopper />
+            <Tooltip title="Help" placement="bottom">
+              <span>
+                <HelpDialog />
+              </span>
+            </Tooltip>
+
           </Box>
         </StyledToolbar>
       </AppBar>

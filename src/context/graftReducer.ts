@@ -19,7 +19,9 @@ type GraftAction = {
     | "setDrawerOpen"
     | "setSelectedColumns"
     | "setFiles"
-    | "setGraftState";
+    | "setGraftState"
+    | "updateFile"
+    | "updateCSVfileColumn";
   payload:
     | INotification
     | IFileType
@@ -30,7 +32,9 @@ type GraftAction = {
     | boolean
     | csvFileColum[]
     | ProcessFile[]
-    | IGraftState;
+    | IGraftState
+    | ProcessFile
+    | csvFileColum;
 };
 
 export const graftReducer = (
@@ -84,6 +88,30 @@ export const graftReducer = (
         ...state,
         ...(action.payload as IGraftState),
       };
+    case "updateFile": {
+      const files = state.files.map((file) => {
+        if (file.id === (action.payload as ProcessFile).id) {
+          return action.payload as ProcessFile;
+        }
+        return file;
+      });
+      return {
+        ...state,
+        files,
+      };
+    }
+    case "updateCSVfileColumn": {
+      const csvFileColum = state.csvFileColum.map((column) => {
+        if (column.id === (action.payload as csvFileColum).id) {
+          return action.payload as csvFileColum;
+        }
+        return column;
+      });
+      return {
+        ...state,
+        csvFileColum,
+      };
+    }
 
     default:
       return state;
