@@ -13,6 +13,8 @@ export type GrafContextProps = {
   setSelectedColumns: (columns: csvFileColum[]) => void;
   setFiles: (files: ProcessFile[]) => void;
   setGraftState: (graftState: IGraftState) => void;
+  updateFile: (file: ProcessFile) => void;
+  updateCSVfileColumn: (csvFileColum: csvFileColum) => void;
 }
 
 
