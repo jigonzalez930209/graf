@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { GrafContext } from './GraftContext';
-import { IGraftState, INotification, IFileType, IGrafType, IGraftImpedanceType, IStepBetweenPoints, csvFileColum, ProcessFile } from '../interfaces/interfaces';
+import { IGraftState, INotification, IFileType, IGrafType, IGraftImpedanceType, IStepBetweenPoints, csvFileColum, ProcessFile, IPlatform } from '../interfaces/interfaces';
 import { graftReducer } from './graftReducer';
 
 export const INITIAL_STATE: IGraftState = {
@@ -18,7 +18,8 @@ export const INITIAL_STATE: IGraftState = {
   stepBetweenPoints: 30,
   drawerOpen: true,
   csvFileColum: [],
-  files: []
+  files: [],
+  platform: null
 }
 
 interface props {
@@ -50,6 +51,7 @@ export const GraftProvider = ({ children, initialState }: props) => {
 
   const updateCSVfileColumn = (csvFileColum: csvFileColum) => dispatch({ type: 'updateCSVfileColumn', payload: csvFileColum })
 
+  const setPlatform = (platform: IPlatform) => dispatch({ type: 'setPlatform', payload: platform })
   React.useEffect(() => {
     setGraftState(initialState)
   }, [initialState]);
@@ -67,7 +69,8 @@ export const GraftProvider = ({ children, initialState }: props) => {
       setFiles,
       updateFile,
       updateCSVfileColumn,
-      setGraftState
+      setGraftState,
+      setPlatform
     }}>
       {children}
     </GrafContext.Provider>

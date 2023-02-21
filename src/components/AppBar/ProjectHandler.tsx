@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
-import Tooltip from '../Tooltip';
-import { openProject, saveProject } from '../../utils/utils';
-import { GrafContext } from '../../context/GraftContext';
-import { useSnackbar } from 'notistack';
-import { LoadingsContext } from '../../context/Loading';
 
+import Tooltip from '../Tooltip';
+import { openProject, saveProject } from '../../utils';
+import { GrafContext } from '../../context/GraftContext';
+import { LoadingsContext } from '../../context/Loading';
 
 const ProjectHandler = () => {
   const { graftState, setGraftState } = React.useContext(GrafContext);
@@ -25,7 +25,6 @@ const ProjectHandler = () => {
     const notification = await saveProject(graftState)
     enqueueSnackbar(notification.message, { variant: notification.variant })
     setLoading(false)
-
   }
 
   return (
