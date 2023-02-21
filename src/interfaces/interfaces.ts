@@ -19,7 +19,10 @@ export interface IGraftState {
   drawerOpen: boolean;
   csvFileColum: csvFileColum[];
   files: ProcessFile[];
+  platform: IPlatform;
 }
+
+export type IPlatform = "web" | "desktop" | null;
 
 export type IGrafType = "line" | "scatter";
 

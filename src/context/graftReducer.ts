@@ -7,6 +7,7 @@ import {
   IStepBetweenPoints,
   csvFileColum,
   ProcessFile,
+  IPlatform,
 } from "../interfaces/interfaces";
 
 type GraftAction = {
@@ -21,7 +22,8 @@ type GraftAction = {
     | "setFiles"
     | "setGraftState"
     | "updateFile"
-    | "updateCSVfileColumn";
+    | "updateCSVfileColumn"
+    | "setPlatform";
   payload:
     | INotification
     | IFileType
@@ -34,7 +36,8 @@ type GraftAction = {
     | ProcessFile[]
     | IGraftState
     | ProcessFile
-    | csvFileColum;
+    | csvFileColum
+    | IPlatform;
 };
 
 export const graftReducer = (
@@ -110,6 +113,12 @@ export const graftReducer = (
       return {
         ...state,
         csvFileColum,
+      };
+    }
+    case "setPlatform": {
+      return {
+        ...state,
+        platform: action.payload as "web" | "desktop",
       };
     }
 

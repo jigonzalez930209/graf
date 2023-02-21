@@ -1,5 +1,5 @@
 import * as React from "react";
-import { csvFileColum, IGraftImpedanceType, IGraftState, IGrafType, INotification, ProcessFile, IFileType } from '../interfaces/interfaces';
+import { csvFileColum, IGraftImpedanceType, IGraftState, IGrafType, INotification, ProcessFile, IFileType, IPlatform } from '../interfaces/interfaces';
 
 
 export type GrafContextProps = {
@@ -15,6 +15,7 @@ export type GrafContextProps = {
   setGraftState: (graftState: IGraftState) => void;
   updateFile: (file: ProcessFile) => void;
   updateCSVfileColumn: (csvFileColum: csvFileColum) => void;
+  setPlatform: (platform: IPlatform) => void;
 }
 
 
