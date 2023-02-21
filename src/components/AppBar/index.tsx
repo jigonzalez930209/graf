@@ -13,6 +13,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { CssBaseline, Divider, Drawer } from '@mui/material';
+import styled from '@mui/material/styles/styled';
 
 import FileList from '../FileList'
 import { useData } from '../../hooks/useData';
@@ -22,11 +23,11 @@ import { GrafContext } from '../../context/GraftContext';
 import Logs from '../LogsComponent';
 import { ProcessFile } from '../../interfaces/interfaces';
 import Tooltip from '../Tooltip';
-import styled from '@mui/material/styles/styled';
 import DataSelectorDialog from '../FileContent/DataSelect';
+import FileUploader from '../FileUploadWeb';
+import { HelpDialog } from '../Help';
 
 import ProjectHandler from './ProjectHandler';
-import { HelpDialog } from '../Help';
 
 const StyledToolbar = styled(Toolbar)(() => ({
   paddingTop: 0,
@@ -41,13 +42,13 @@ const drawerWidth = 240;
 type BarProps = {
   files: ProcessFile[]
   content: JSX.Element
-  readAllFiles: () => void
+  readAllFiles: (fileList: FileList | undefined) => void
 }
 
 const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
   const { cleanData } = useData()
   const [open, setOpen] = React.useState<{ exp: boolean, dataSelect }>({ exp: false, dataSelect: false })
-  const { graftState: { drawerOpen, fileType }, setDrawerOpen } = React.useContext(GrafContext)
+  const { graftState: { drawerOpen, fileType, platform }, setDrawerOpen } = React.useContext(GrafContext)
   const [logsDrawerOpen, setLogsDrawerOpen] = React.useState(false)
 
   return (
@@ -76,22 +77,29 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
             </span>
           </Tooltip>
           <Typography variant="h6" sx={{ fontSize: '15px' }} noWrap component="div">
-            Graf 0.1.4
+            Graf 0.1.4 {'  '} {platform}
           </Typography>
           <Box sx={{ alignSelf: 'center', justifySelf: 'end' }}>
             <Tooltip title="Open files" placement="bottom">
               <span>
-                <IconButton
-                  size="small"
-                  color="inherit"
-                  sx={{ marginRight: 1 }}
-                  onClick={readAllFiles}
-                >
-                  <FileOpenIcon fontSize='inherit' />
-                </IconButton>
+                {platform === 'desktop' ?
+                  (<IconButton
+                    size="small"
+                    color="inherit"
+                    sx={{ marginRight: 1 }}
+                    onClick={() => readAllFiles(null)}
+                  >
+                    <FileOpenIcon fontSize='inherit' />
+                  </IconButton>
+                  ) : (<FileUploader
+                    handleFile={readAllFiles}
+                  >
+                    <FileOpenIcon fontSize='inherit' />
+                  </FileUploader>
+                  )}
               </span>
             </Tooltip>
-            <ProjectHandler />
+            {platform === 'desktop' && <ProjectHandler />}
             <Tooltip title="Download file" placement="bottom">
               <span>
                 <IconButton
