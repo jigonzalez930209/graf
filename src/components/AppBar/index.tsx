@@ -21,7 +21,7 @@ import ExportModal from '../ExportModal';
 import GraftHandlerPopper from '../GraftHandlerPopper';
 import { GrafContext } from '../../context/GraftContext';
 import Logs from '../LogsComponent';
-import { ProcessFile } from '../../interfaces/interfaces';
+import { IPlatform, ProcessFile } from '../../interfaces/interfaces';
 import Tooltip from '../Tooltip';
 import DataSelectorDialog from '../FileContent/DataSelect';
 import FileUploader from '../FileUploadWeb';
@@ -43,12 +43,13 @@ type BarProps = {
   files: ProcessFile[]
   content: JSX.Element
   readAllFiles: (fileList: FileList | undefined) => void
+  platform: IPlatform
 }
 
-const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
+const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => {
   const { cleanData } = useData()
   const [open, setOpen] = React.useState<{ exp: boolean, dataSelect }>({ exp: false, dataSelect: false })
-  const { graftState: { drawerOpen, fileType, platform }, setDrawerOpen } = React.useContext(GrafContext)
+  const { graftState: { drawerOpen, fileType }, setDrawerOpen } = React.useContext(GrafContext)
   const [logsDrawerOpen, setLogsDrawerOpen] = React.useState(false)
 
   return (
@@ -82,7 +83,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
           <Box sx={{ alignSelf: 'center', justifySelf: 'end' }}>
             <Tooltip title="Open files" placement="bottom">
               <span>
-                {platform === 'desktop' ?
+                {platform === 'desktop' &&
                   (<IconButton
                     size="small"
                     color="inherit"
@@ -91,12 +92,13 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles }) => {
                   >
                     <FileOpenIcon fontSize='inherit' />
                   </IconButton>
-                  ) : (<FileUploader
-                    handleFile={readAllFiles}
-                  >
-                    <FileOpenIcon fontSize='inherit' />
-                  </FileUploader>
                   )}
+                {platform === 'web' && (<FileUploader
+                  handleFile={readAllFiles}
+                >
+                  <FileOpenIcon fontSize='inherit' />
+                </FileUploader>
+                )}
               </span>
             </Tooltip>
             {platform === 'desktop' && <ProjectHandler />}
