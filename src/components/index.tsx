@@ -6,18 +6,21 @@ import * as _ from 'lodash';
 
 import { readAllFiles, readAllFilesUsingWebProcess, readFilesUsingTauriProcess } from "../utils";
 import { GrafContext } from "../context/GraftContext";
+import { LoadingsContext } from "../context/Loading";
 import { useData } from "../hooks/useData";
 
 import Loader from "./Loader/Loader";
 import AppBar from "./AppBar";
 import PlotlyChart from "./GrafContainer";
 import DragDrop from "./FileList/drag-drop/DragDrop";
-import { LoadingsContext } from "../context/Loading";
+import { IPlatform } from "../interfaces/interfaces";
 
 const Index: React.FC = () => {
   const { updateData, data } = useData();
-  const { graftState, setPlatform } = React.useContext(GrafContext);
+  const { graftState } = React.useContext(GrafContext);
   const { loading: { loading }, setLoading } = React.useContext(LoadingsContext);
+  const [platform, setPlatform] = React.useState<IPlatform>(null)
+
 
   const { enqueueSnackbar } = useSnackbar()
 
@@ -35,11 +38,14 @@ const Index: React.FC = () => {
 
   const readFiles = async (fileList: FileList | undefined) => {
     setLoading(true)
-    if (!!window.__TAURI_METADATA__) {
+    if (platform === 'web') {
+      handleFileUploadUsingWebProcess(fileList)
+    } else if (platform === 'desktop') {
       updateData(await readFilesUsingTauriProcess().finally(() => setLoading(false)))
     } else {
-      handleFileUploadUsingWebProcess(fileList)
+      enqueueSnackbar(`Occur an error`, { variant: 'error' })
     }
+    setLoading(false)
   }
 
   const handleFileDropChange = React.useCallback(async () => {
@@ -59,14 +65,14 @@ const Index: React.FC = () => {
   }, [loading])
 
   React.useEffect(() => {
-
-    if (!window.__TAURI_METADATA__) {
-      setPlatform('web')
-    } else {
-      setPlatform('desktop')
-    }
     handleFileDropChange()
+    if (window.__TAURI_METADATA__) {
+      setPlatform('desktop')
+    } else {
+      setPlatform('web')
+    }
   }, [])
+
 
   return (
     <div>
@@ -81,6 +87,7 @@ const Index: React.FC = () => {
       <AppBar
         readAllFiles={readFiles}
         files={data}
+        platform={platform}
         content={
           <div>
             {graftState?.fileType === "csv"
