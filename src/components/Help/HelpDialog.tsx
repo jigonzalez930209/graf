@@ -6,6 +6,7 @@ import { Dialog, Divider, AppBar, Toolbar, IconButton, Typography, Slide, Drawer
 import { styled } from '@mui/styles';
 import ListHelpItems from './components/ListHelpItems';
 import MdText from './components/Text';
+import { jelloVertical } from '../../utils';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -86,7 +87,13 @@ export default function FullScreenDialog() {
         sx={{ ml: 2 }}
         color={'inherit'}
       >
-        <HelpIcon fontSize='small' />
+        <HelpIcon
+          sx={{
+            "&:hover": {
+              ...jelloVertical
+            }
+          }}
+          fontSize='small' />
       </IconButton>
       <Dialog
         fullScreen

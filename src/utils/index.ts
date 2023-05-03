@@ -17,3 +17,4 @@ export {
   readAllWebProcess,
   readFileContentsUsingJS,
 } from "./web";
+export { increaseSize, rotate, jelloVertical } from "./animation";

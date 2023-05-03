@@ -28,6 +28,7 @@ import FileUploader from '../FileUploadWeb';
 import { HelpDialog } from '../Help';
 
 import ProjectHandler from './ProjectHandler';
+import { jelloVertical } from '../../utils';
 
 const StyledToolbar = styled(Toolbar)(() => ({
   paddingTop: 0,
@@ -72,6 +73,11 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                 color="inherit"
                 edge="start"
                 size="small"
+                sx={{
+                  "&:hover": {
+                    ...jelloVertical
+                  }
+                }}
               >
                 {drawerOpen ? <ChevronLeftIcon fontSize='inherit' /> : <ChevronRightIcon fontSize='inherit' />}
               </IconButton>
@@ -87,16 +93,30 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                   (<IconButton
                     size="small"
                     color="inherit"
-                    sx={{ marginRight: 1 }}
+                    sx={{
+                      marginRight: 1
+                    }}
                     onClick={() => readAllFiles(null)}
                   >
-                    <FileOpenIcon fontSize='inherit' />
+                    <FileOpenIcon
+                      sx={{
+                        "&:hover": {
+                          ...jelloVertical
+                        }
+                      }}
+                      fontSize='inherit' />
                   </IconButton>
                   )}
                 {platform === 'web' && (<FileUploader
                   handleFile={readAllFiles}
                 >
-                  <FileOpenIcon fontSize='inherit' />
+                  <FileOpenIcon
+                    sx={{
+                      "&:hover": {
+                        ...jelloVertical
+                      }
+                    }}
+                    fontSize='inherit' />
                 </FileUploader>
                 )}
               </span>
@@ -111,7 +131,13 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                   disabled={(files?.length < 1 || fileType === 'csv')}
                   onClick={() => setOpen(prev => ({ ...prev, exp: true }))}
                 >
-                  <SaveIcon fontSize='inherit' />
+                  <SaveIcon
+                    sx={{
+                      "&:hover": {
+                        ...jelloVertical
+                      }
+                    }}
+                    fontSize='inherit' />
                 </IconButton>
               </span>
             </Tooltip>
@@ -124,7 +150,13 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                   disabled={fileType !== 'csv'}
                   onClick={() => setOpen(prev => ({ ...prev, dataSelect: true }))}
                 >
-                  <DescriptionIcon fontSize='inherit' />
+                  <DescriptionIcon
+                    sx={{
+                      "&:hover": {
+                        ...jelloVertical
+                      }
+                    }}
+                    fontSize='inherit' />
                 </IconButton>
               </span>
             </Tooltip>
@@ -137,7 +169,13 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                   disabled={!files?.length}
                   onClick={async () => { await alert('All data wold be clean and all changes its wos lost '); cleanData() }}
                 >
-                  <ClearIcon fontSize='inherit' />
+                  <ClearIcon
+                    sx={{
+                      "&:hover": {
+                        ...jelloVertical
+                      }
+                    }}
+                    fontSize='inherit' />
                 </IconButton>
               </span>
             </Tooltip>
