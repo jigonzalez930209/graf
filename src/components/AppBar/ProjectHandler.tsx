@@ -5,9 +5,9 @@ import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
 
 import Tooltip from '../Tooltip';
-import { jelloVertical, openProject, saveProject } from '../../utils';
-import { GrafContext } from '../../context/GraftContext';
-import { LoadingsContext } from '../../context/Loading';
+import { LoadingsContext } from '../../context/Loading'
+import { GrafContext } from '../../context/GraftContext'
+import { jelloVertical, openProject, saveProject } from '../../utils'
 
 const ProjectHandler = () => {
   const { graftState, setGraftState } = React.useContext(GrafContext);

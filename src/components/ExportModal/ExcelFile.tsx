@@ -1,12 +1,13 @@
 import * as React from 'react'
 import { useExcelDownloder } from 'react-xls';
-import { GrafContext } from '../../context/GraftContext';
-import { useData } from '../../hooks/useData';
+
+import { useData } from '../../hooks/useData'
+import { GrafContext } from '../../context/GraftContext'
 
 type ExcelFileExportProps = {
-  columns: string[],
-  isSameSheet: boolean,
-  children: React.ReactNode
+  columns: string[]
+  isSameSheet: boolean
+  children?: React.ReactNode
   filename: string
 }
 

@@ -1,1 +1,1 @@
-export { default as HelpDialog } from './HelpDialog';
+export { default as HelpDialog } from './HelpDialog'

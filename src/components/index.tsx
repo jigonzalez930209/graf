@@ -1,26 +1,28 @@
-import * as React from "react";
+import * as _ from 'lodash'
+import * as React from 'react'
 import { listen } from '@tauri-apps/api/event'
-import { Backdrop } from "@mui/material";
-import { useSnackbar } from "notistack";
-import * as _ from 'lodash';
+import { Backdrop } from '@mui/material'
+import { useSnackbar } from 'notistack'
 
-import { readAllFiles, readAllFilesUsingWebProcess, readFilesUsingTauriProcess } from "../utils";
-import { GrafContext } from "../context/GraftContext";
-import { LoadingsContext } from "../context/Loading";
-import { useData } from "../hooks/useData";
+import { useData } from '../hooks/useData'
+import { LoadingsContext } from '../context/Loading'
+import { GrafContext } from '../context/GraftContext'
+import { readAllFiles, readAllFilesUsingWebProcess, readFilesUsingTauriProcess } from '../utils'
 
-import Loader from "./Loader/Loader";
-import AppBar from "./AppBar";
-import PlotlyChart from "./GrafContainer";
-import DragDrop from "./FileList/drag-drop/DragDrop";
-import { IPlatform } from "../interfaces/interfaces";
+import AppBar from './AppBar'
+import Loader from './Loader/Loader'
+import PlotlyChart from './GrafContainer'
+import DragDrop from './FileList/drag-drop/DragDrop'
+import { IPlatform } from '../interfaces/interfaces'
 
 const Index: React.FC = () => {
-  const { updateData, data } = useData();
-  const { graftState } = React.useContext(GrafContext);
-  const { loading: { loading }, setLoading } = React.useContext(LoadingsContext);
+  const { updateData, data } = useData()
+  const { graftState } = React.useContext(GrafContext)
+  const {
+    loading: { loading },
+    setLoading,
+  } = React.useContext(LoadingsContext)
   const [platform, setPlatform] = React.useState<IPlatform>(null)
-
 
   const { enqueueSnackbar } = useSnackbar()
 
@@ -60,7 +62,8 @@ const Index: React.FC = () => {
         updateData(await files.contents)
         setLoading(false)
       }
-      if (files.notSupported.length) enqueueSnackbar(`Not supported files: ${files.notSupported.join(', ')}`, { variant: 'error' })
+      if (files.notSupported.length)
+        enqueueSnackbar(`Not supported files: ${files.notSupported.join(', ')}`, { variant: 'error' })
     })
   }, [loading])
 
@@ -73,32 +76,29 @@ const Index: React.FC = () => {
     }
   }, [])
 
-
   return (
     <div>
-      {loading && <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-        onClick={() => { }}
-      >
-        <Loader type="hash" />
-      </Backdrop>
-      }
+      {loading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
+          open={loading}
+          onClick={() => {}}
+        >
+          <Loader type='hash' />
+        </Backdrop>
+      )}
       <AppBar
         readAllFiles={readFiles}
         files={data}
         platform={platform}
         content={
           <div>
-            {graftState?.fileType === "csv"
-              ? <DragDrop PlotlyChart={<PlotlyChart />} />
-              : <PlotlyChart />
-            }
+            {graftState?.fileType === 'csv' ? <DragDrop PlotlyChart={<PlotlyChart />} /> : <PlotlyChart />}
           </div>
         }
       />
-    </div >
-  );
+    </div>
+  )
 }
 
-export default Index;
+export default Index
