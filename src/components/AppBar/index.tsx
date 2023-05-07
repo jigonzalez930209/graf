@@ -90,7 +90,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
             </span>
           </Tooltip>
           <Typography variant='h6' sx={{ fontSize: '15px' }} noWrap component='div'>
-            Graf 0.1.4 {'  '} {platform}
+            Graf 0.1.5 {'  '} {platform}
           </Typography>
           <Box sx={{ alignSelf: 'center', justifySelf: 'end' }}>
             <Tooltip title='Open files' placement='bottom'>

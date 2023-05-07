@@ -1,4 +1,4 @@
-# Graf 0.1.4 Help
+# Graf 0.1.5 Help
 
 A program designed to help you create and manage your own charts. The program is still in development and is not yet complete. If you have any questions or suggestions, please contact me at [https://github.com/jigonzalez930209/graf/issues](https://github.com/jigonzalez930209/graf/issues).
 
