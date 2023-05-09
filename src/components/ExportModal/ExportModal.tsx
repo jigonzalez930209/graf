@@ -1,20 +1,21 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import Checkbox, { CheckboxProps } from '@mui/material/Checkbox';
-import { FormControl, FormControlLabel, FormGroup, FormHelperText, FormLabel, Switch, TextField } from '@mui/material';
-import { Box } from '@mui/system';
-import { COLUMNS_IMPEDANCE, COLUMNS_VOLTAMETER } from '../../utils/utils';
-import _ from 'lodash';
-import ExcelFileExport from './ExcelFile';
-import CircularProgress from '@mui/material/CircularProgress';
-import { GrafContext } from '../../context/GraftContext';
+import _ from 'lodash'
+import * as React from 'react'
+import { Box } from '@mui/system'
+import Dialog from '@mui/material/Dialog'
+import { styled } from '@mui/material/styles'
+import IconButton from '@mui/material/IconButton'
+import CloseIcon from '@mui/icons-material/Close'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import CircularProgress from '@mui/material/CircularProgress'
+import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
+import { FormControl, FormControlLabel, FormGroup, FormLabel, Switch, TextField } from '@mui/material'
+
+import { GrafContext } from '../../context/GraftContext'
+import { COLUMNS_IMPEDANCE, COLUMNS_VOLTAMETER } from '../../utils/utils'
+
+import ExcelFileExport from './ExcelFile'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -23,19 +24,18 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogActions-root': {
     padding: theme.spacing(1),
   },
-}));
-
+}))
 
 const BpIcon = styled('span')(({ theme }) => ({
-  borderRadius: 3,
-  width: 16,
-  height: 16,
-  boxShadow:
+  'borderRadius': 3,
+  'width': 16,
+  'height': 16,
+  'boxShadow':
     theme.palette.mode === 'dark'
       ? '0 0 0 1px rgb(16 22 26 / 40%)'
       : 'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
-  backgroundColor: theme.palette.mode === 'dark' ? '#394b59' : '#f5f8fa',
-  backgroundImage:
+  'backgroundColor': theme.palette.mode === 'dark' ? '#394b59' : '#f5f8fa',
+  'backgroundImage':
     theme.palette.mode === 'dark'
       ? 'linear-gradient(180deg,hsla(0,0%,100%,.05),hsla(0,0%,100%,0))'
       : 'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
@@ -48,14 +48,13 @@ const BpIcon = styled('span')(({ theme }) => ({
   },
   'input:disabled ~ &': {
     boxShadow: 'none',
-    background:
-      theme.palette.mode === 'dark' ? 'rgba(57,75,89,.5)' : 'rgba(206,217,224,.5)',
+    background: theme.palette.mode === 'dark' ? 'rgba(57,75,89,.5)' : 'rgba(206,217,224,.5)',
   },
-}));
+}))
 
 const BpCheckedIcon = styled(BpIcon)({
-  backgroundColor: '#137cbd',
-  backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
+  'backgroundColor': '#137cbd',
+  'backgroundImage': 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
   '&:before': {
     display: 'block',
     width: 16,
@@ -69,7 +68,7 @@ const BpCheckedIcon = styled(BpIcon)({
   'input:hover ~ &': {
     backgroundColor: '#106ba3',
   },
-});
+})
 
 function BpCheckbox(props: CheckboxProps) {
   return (
@@ -78,37 +77,35 @@ function BpCheckbox(props: CheckboxProps) {
         '&:hover': { bgcolor: 'transparent' },
       }}
       disableRipple
-      color="default"
+      color='default'
       checkedIcon={<BpCheckedIcon />}
       icon={<BpIcon />}
       inputProps={{ 'aria-label': 'Checkbox demo' }}
       {...props}
     />
-  );
+  )
 }
 
 export interface DialogTitleProps {
-  id: string;
-  children?: React.ReactNode;
-  onClose: () => void;
+  id: string
+  children?: React.ReactNode
+  onClose: () => void
 }
 
 function BootstrapDialogTitle(props: DialogTitleProps) {
-  const { children, onClose, ...other } = props;
+  const { children, onClose, ...other } = props
 
   return (
     <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignContent: 'center' }}>
-        <div >
-          {children}
-        </div>
+        <div>{children}</div>
         {onClose ? (
           <IconButton
-            aria-label="close"
+            aria-label='close'
             onClick={onClose}
             sx={{
               ml: 1,
-              color: (theme) => theme.palette.grey[500],
+              color: theme => theme.palette.grey[500],
             }}
           >
             <CloseIcon />
@@ -116,7 +113,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
         ) : null}
       </div>
     </DialogTitle>
-  );
+  )
 }
 
 type ExportModalProps = {
@@ -125,102 +122,117 @@ type ExportModalProps = {
 }
 
 const ExportModal: React.FC<ExportModalProps> = ({ open, onClose }) => {
-  const { graftState: { fileType } } = React.useContext(GrafContext)
+  const {
+    graftState: { fileType },
+  } = React.useContext(GrafContext)
   const [state, setState] = React.useState(
-    fileType === 'teq4Z' ? COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}) : COLUMNS_VOLTAMETER.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
-  );
+    fileType === 'teq4Z'
+      ? COLUMNS_IMPEDANCE.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+      : COLUMNS_VOLTAMETER.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+  )
   const [exportData, setExportData] = React.useState(null)
   const [isSameSheet, setIsSameSheet] = React.useState(true)
   const [filename, setFilename] = React.useState(Date.now().toString())
 
-  const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => setIsSameSheet(event.target.checked)
+  const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setIsSameSheet(event.target.checked)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({
       ...state,
       [event.target.name]: event.target.checked,
-    });
-  };
+    })
+  }
 
   const error = !Object.values(state).find(c => c === true) || filename.length < 3
 
   const handleClose = () => {
-    onClose();
-  };
+    onClose()
+  }
 
   React.useEffect(() => {
     setExportData(null)
     const timer = setTimeout(() => {
-      setExportData(<div>
-        <ExcelFileExport
-          filename={filename}
-          isSameSheet={isSameSheet}
-          columns={
-            Object.entries(state).filter(([k, v], _) => v === true).map(([k, v]) => k)
-          }
-        >
-        </ExcelFileExport>
-      </div>)
-
+      setExportData(
+        <div>
+          <ExcelFileExport
+            filename={filename}
+            isSameSheet={isSameSheet}
+            columns={Object.entries(state)
+              .filter(([k, v], _) => v === true)
+              .map(([k, v]) => k)}
+          />
+        </div>
+      )
     }, 10)
 
-    return () => { clearTimeout(timer) }
-  }, [filename, state, isSameSheet,])
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [filename, state, isSameSheet])
 
-  return (open &&
-    <div>
-      <BootstrapDialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-        maxWidth='lg'
-        sx={{ minWidth: 450 }}
-      >
-        <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Select a columns to export
-        </BootstrapDialogTitle>
-        <DialogContent dividers>
-          <Box sx={{ display: 'flex' }}>
-            <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
-              <FormLabel component="legend">Select columns to save</FormLabel>
+  return (
+    open && (
+      <div>
+        <BootstrapDialog
+          onClose={handleClose}
+          aria-labelledby='customized-dialog-title'
+          open={open}
+          maxWidth='lg'
+          sx={{ minWidth: 450 }}
+        >
+          <BootstrapDialogTitle id='customized-dialog-title' onClose={handleClose}>
+            Select a columns to export
+          </BootstrapDialogTitle>
+          <DialogContent dividers>
+            <Box sx={{ display: 'flex' }}>
+              <FormControl sx={{ m: 3 }} component='fieldset' variant='standard'>
+                <FormLabel component='legend'>Select columns to save</FormLabel>
+                <FormGroup>
+                  {fileType === 'teq4Z' &&
+                    COLUMNS_IMPEDANCE.map(column => (
+                      <FormControlLabel
+                        control={<BpCheckbox checked={state[column]} onChange={handleChange} name={column} />}
+                        key={column}
+                        label={column}
+                      />
+                    ))}
+                  {fileType === 'teq4' &&
+                    COLUMNS_VOLTAMETER.map(column => (
+                      <FormControlLabel
+                        control={<BpCheckbox checked={state[column]} onChange={handleChange} name={column} />}
+                        key={column}
+                        label={column}
+                      />
+                    ))}
+                </FormGroup>
+              </FormControl>
+              <FormControl sx={{ m: 3 }} component='fieldset' variant='standard'>
+                <FormLabel component='legend'>In the same Sheet</FormLabel>
+                <FormGroup>
+                  <Switch checked={isSameSheet} onChange={handleSwitchChange} name='checkedB' />
+                </FormGroup>
+              </FormControl>
+            </Box>
+            <FormControl sx={{ m: 3 }} component='fieldset' variant='standard'>
+              <FormLabel component='legend'>File Name</FormLabel>
               <FormGroup>
-                {fileType === 'teq4Z' && COLUMNS_IMPEDANCE.map(column => <FormControlLabel
-                  control={
-                    <BpCheckbox checked={state[column]} onChange={handleChange} name={column} />
-                  }
-                  key={column}
-                  label={column}
-                />)}
-                {fileType === 'teq4' && COLUMNS_VOLTAMETER.map(column => <FormControlLabel
-                  control={
-                    <BpCheckbox checked={state[column]} onChange={handleChange} name={column} />
-                  }
-                  key={column}
-                  label={column}
-                />)}
+                <TextField
+                  sx={{ width: '100%' }}
+                  value={filename}
+                  error={error}
+                  onChange={e => setFilename(e.target.value)}
+                  name='filename'
+                />
               </FormGroup>
             </FormControl>
-            <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
-              <FormLabel component="legend">In the same Sheet</FormLabel>
-              <FormGroup>
-                <Switch checked={isSameSheet} onChange={handleSwitchChange} name="checkedB" />
-              </FormGroup>
-            </FormControl>
-          </Box>
-          <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
-            <FormLabel component="legend">File Name</FormLabel>
-            <FormGroup>
-              <TextField sx={{ width: '100%' }} value={filename} error={error} onChange={e => setFilename(e.target.value)} name="filename" />
-            </FormGroup>
-          </FormControl>
-        </DialogContent>
-        <DialogActions sx={{ height: '3.5rem' }}>
-          {!error ?
-            exportData :
-            <CircularProgress size={24} sx={{ color: 'primary.main' }} />}
-        </DialogActions>
-      </BootstrapDialog>
-    </div>
-  );
+          </DialogContent>
+          <DialogActions sx={{ height: '3.5rem' }}>
+            {!error ? exportData : <CircularProgress size={24} sx={{ color: 'primary.main' }} />}
+          </DialogActions>
+        </BootstrapDialog>
+      </div>
+    )
+  )
 }
 
 export default ExportModal

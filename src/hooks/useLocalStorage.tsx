@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
-
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
 import { useEventCallback, useEventListener } from 'usehooks-ts'
 
 declare global {
@@ -43,9 +36,7 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
   const setValue: SetValue<T> = useEventCallback(value => {
     // Prevent build error "window is undefined" but keeps working
     if (typeof window === 'undefined') {
-      console.warn(
-        `Tried setting localStorage key “${key}” even though environment is not a client`,
-      )
+      console.warn(`Tried setting localStorage key “${key}” even though environment is not a client`)
     }
 
     try {
@@ -77,7 +68,7 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
       }
       setStoredValue(readValue())
     },
-    [key, readValue],
+    [key, readValue]
   )
 
   // this only works for other documents, not the current one

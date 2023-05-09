@@ -8,7 +8,7 @@ import {
   csvFileColum,
   ProcessFile,
   IPlatform,
-} from "../interfaces/interfaces";
+} from '../interfaces/interfaces'
 
 type GraftAction = {
   type:

@@ -5,9 +5,9 @@ import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
 
 import Tooltip from '../Tooltip';
-import { openProject, saveProject } from '../../utils';
-import { GrafContext } from '../../context/GraftContext';
-import { LoadingsContext } from '../../context/Loading';
+import { LoadingsContext } from '../../context/Loading'
+import { GrafContext } from '../../context/GraftContext'
+import { jelloVertical, openProject, saveProject } from '../../utils'
 
 const ProjectHandler = () => {
   const { graftState, setGraftState } = React.useContext(GrafContext);
@@ -37,7 +37,11 @@ const ProjectHandler = () => {
             sx={{ mr: 1 }}
             onClick={open}
           >
-            <OpenInBrowserIcon fontSize='small' />
+            <OpenInBrowserIcon sx={{
+              "&:hover": {
+                ...jelloVertical
+              }
+            }} fontSize='small' />
           </IconButton>
         </span>
       </Tooltip>
@@ -46,7 +50,12 @@ const ProjectHandler = () => {
           <IconButton
             size='small'
             color='inherit'
-            sx={{ mr: 1 }}
+            sx={{
+              mr: 1,
+              "&:hover": {
+                ...jelloVertical
+              }
+            }}
             onClick={save}
             disabled={graftState?.files?.length === 0}
           >

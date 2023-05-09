@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "graf",
-    "version": "0.1.4"
+    "version": "0.1.5"
   },
   "tauri": {
     "allowlist": {
@@ -43,11 +43,7 @@
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": "",
-        "webviewInstallMode": {
-          "silent": true,
-          "type": "offlineInstaller"
-        }
+        "timestampUrl": ""
       }
     },
     "security": {
@@ -60,7 +56,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Graf 0.1.4",
+        "title": "Graf 0.1.5",
         "fileDropEnabled": true,
         "maximized": true
       }

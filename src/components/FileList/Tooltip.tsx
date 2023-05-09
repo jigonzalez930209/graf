@@ -1,15 +1,13 @@
-import { Typography, Tooltip as MUITooltip } from '@mui/material';
-import Select from '@mui/material/Select';
-import { Box } from '@mui/system';
-import * as React from 'react';
-import { ProcessFile } from '../../interfaces/interfaces';
+import * as React from 'react'
+import { Box } from '@mui/system'
+import { Typography, Tooltip as MUITooltip } from '@mui/material'
 
+import { ProcessFile } from '../../interfaces/interfaces'
 
-const Tooltip = ({ children, file }: { children: JSX.Element, file: ProcessFile }) => {
-
+const Tooltip = ({ children, file }: { children: JSX.Element; file: ProcessFile }) => {
   return (
     <MUITooltip
-      placement="right"
+      placement='right'
       arrow
       title={
         <Box sx={{ transform: 'scale(0.8)' }}>
@@ -21,7 +19,8 @@ const Tooltip = ({ children, file }: { children: JSX.Element, file: ProcessFile 
               <p>Total Time: {file.voltammeter?.totalTime} s</p>
               <p>Total Points: {file.content?.length}</p>
             </React.Fragment>
-          )} {file.type === 'teq4Z' && (
+          )}{' '}
+          {file.type === 'teq4Z' && (
             <React.Fragment>
               <Typography variant='h6'>Impedance</Typography>
               <p>Voltage: {file.impedance?.V} V</p>
@@ -46,4 +45,4 @@ const Tooltip = ({ children, file }: { children: JSX.Element, file: ProcessFile 
   )
 }
 
-export default Tooltip;
+export default Tooltip

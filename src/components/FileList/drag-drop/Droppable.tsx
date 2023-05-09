@@ -1,9 +1,9 @@
 import * as  React from "react";
-import { rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
-import { colors, Divider, Grid } from "@mui/material";
-import { useDroppable } from "@dnd-kit/core";
-import { makeStyles } from "@mui/styles";
-import { useScreen } from "usehooks-ts";
+import { useScreen } from 'usehooks-ts'
+import { makeStyles } from '@mui/styles'
+import { useDroppable } from '@dnd-kit/core'
+import { colors, Divider, Grid } from '@mui/material'
+import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable'
 
 import { GrafContext } from "../../../context/GraftContext";
 
