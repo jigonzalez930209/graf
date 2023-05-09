@@ -20,7 +20,6 @@ import { useData } from '../../hooks/useData';
 import ExportModal from '../ExportModal';
 import GraftHandlerPopper from '../GraftHandlerPopper';
 import { GrafContext } from '../../context/GraftContext';
-import Logs from '../LogsComponent';
 import { IPlatform, ProcessFile } from '../../interfaces/interfaces';
 import Tooltip from '../Tooltip';
 import DataSelectorDialog from '../FileContent/DataSelect';
@@ -201,7 +200,6 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
               },
             }}
           >
-            <Logs />
           </Drawer>
         </Box>
       </Drawer>
