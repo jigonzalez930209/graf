@@ -25,6 +25,7 @@ import { IPlatform, ProcessFile } from '../../interfaces/interfaces'
 import DataSelectorDialog from '../FileContent/DataSelect'
 import FileUploader from '../FileUploadWeb'
 import { HelpDialog } from '../Help'
+import { jelloVertical } from '../../utils'
 
 import ProjectHandler from './ProjectHandler'
 
