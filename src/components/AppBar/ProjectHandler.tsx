@@ -7,15 +7,15 @@ import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
 import Tooltip from '../Tooltip';
 import { LoadingsContext } from '../../context/Loading'
 import { GrafContext } from '../../context/GraftContext'
-import { jelloVertical, openProject, saveProject } from '../../utils'
+import { increaseSize, openProject, saveProject } from '../../utils'
 
 const ProjectHandler = () => {
-  const { graftState, setGraftState } = React.useContext(GrafContext);
-  const { setLoading } = React.useContext(LoadingsContext);
-  const { enqueueSnackbar } = useSnackbar();
+  const { graftState, setGraftState } = React.useContext(GrafContext)
+  const { setLoading } = React.useContext(LoadingsContext)
+  const { enqueueSnackbar } = useSnackbar()
   const open = async () => {
     setLoading(true)
-    const dat = await openProject();
+    const dat = await openProject()
     dat?.data && setGraftState(dat?.data)
     enqueueSnackbar(dat.notification.message, { variant: dat.notification.variant })
     setLoading(false)
@@ -31,17 +31,15 @@ const ProjectHandler = () => {
     <>
       <Tooltip title='Open saved project'>
         <span>
-          <IconButton
-            size='small'
-            color='inherit'
-            sx={{ mr: 1 }}
-            onClick={open}
-          >
-            <OpenInBrowserIcon sx={{
-              "&:hover": {
-                ...jelloVertical
-              }
-            }} fontSize='small' />
+          <IconButton size='small' color='inherit' sx={{ mr: 1 }} onClick={open}>
+            <OpenInBrowserIcon
+              sx={{
+                '&:hover': {
+                  ...increaseSize,
+                },
+              }}
+              fontSize='small'
+            />
           </IconButton>
         </span>
       </Tooltip>
@@ -51,10 +49,10 @@ const ProjectHandler = () => {
             size='small'
             color='inherit'
             sx={{
-              mr: 1,
-              "&:hover": {
-                ...jelloVertical
-              }
+              'mr': 1,
+              '&:hover': {
+                ...increaseSize,
+              },
             }}
             onClick={save}
             disabled={graftState?.files?.length === 0}

@@ -12,11 +12,13 @@ import { CssBaseline, Divider, Drawer } from '@mui/material'
 import DescriptionIcon from '@mui/icons-material/Description'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 import Tooltip from '../Tooltip'
 import FileList from '../FileList'
+import { HelpDialog } from '../Help'
+import ExportModal from '../ExportModal'
+import FileUploader from '../FileUploadWeb'
+import { increaseSize } from '../../utils'
 import { useData } from '../../hooks/useData'
 import ExportModal from '../ExportModal'
 import GraftHandlerPopper from '../GraftHandlerPopper'
@@ -24,8 +26,6 @@ import { GrafContext } from '../../context/GraftContext'
 import { IPlatform, ProcessFile } from '../../interfaces/interfaces'
 import DataSelectorDialog from '../FileContent/DataSelect'
 import FileUploader from '../FileUploadWeb'
-import { HelpDialog } from '../Help'
-import { jelloVertical } from '../../utils'
 
 import ProjectHandler from './ProjectHandler'
 
@@ -53,7 +53,13 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
     graftState: { drawerOpen, fileType },
     setDrawerOpen,
   } = React.useContext(GrafContext)
-  const [logsDrawerOpen, setLogsDrawerOpen] = React.useState(false)
+
+  const handleOpenFiles = () => {
+    cleanData()
+    if (platform === 'desktop') {
+      readAllFiles(null)
+    }
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -77,7 +83,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                 size='small'
                 sx={{
                   '&:hover': {
-                    ...jelloVertical,
+                    ...increaseSize,
                   },
                 }}
               >
@@ -102,12 +108,12 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                     sx={{
                       marginRight: 1,
                     }}
-                    onClick={() => readAllFiles(null)}
+                    onClick={handleOpenFiles}
                   >
                     <FileOpenIcon
                       sx={{
                         '&:hover': {
-                          ...jelloVertical,
+                          ...increaseSize,
                         },
                       }}
                       fontSize='inherit'
@@ -119,7 +125,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                     <FileOpenIcon
                       sx={{
                         '&:hover': {
-                          ...jelloVertical,
+                          ...increaseSize,
                         },
                       }}
                       fontSize='inherit'
@@ -141,7 +147,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                   <SaveIcon
                     sx={{
                       '&:hover': {
-                        ...jelloVertical,
+                        ...increaseSize,
                       },
                     }}
                     fontSize='inherit'
@@ -161,7 +167,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                   <DescriptionIcon
                     sx={{
                       '&:hover': {
-                        ...jelloVertical,
+                        ...increaseSize,
                       },
                     }}
                     fontSize='inherit'
@@ -184,7 +190,7 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
                   <ClearIcon
                     sx={{
                       '&:hover': {
-                        ...jelloVertical,
+                        ...increaseSize,
                       },
                     }}
                     fontSize='inherit'
@@ -214,47 +220,21 @@ const Bar: React.FC<BarProps> = ({ files, content, readAllFiles, platform }) => 
         <StyledToolbar />
         <Divider />
         <Box>
-          <FileList files={files} />
-          <Divider />
-          <IconButton
-            onClick={() => setLogsDrawerOpen(!logsDrawerOpen)}
-            color='inherit'
-            size='small'
-            edge='start'
-            sx={{
-              position: 'absolute',
-              bottom: logsDrawerOpen ? drawerWidth - 10 : 10,
-              left: drawerWidth * 0.8,
-              zIndex: 5000,
-              transform: 'scale(0.8)',
-              backgroundColor: 'grey.300',
-            }}
-          >
-            {logsDrawerOpen ? (
-              <KeyboardArrowDownIcon fontSize='inherit' />
-            ) : (
-              <KeyboardArrowUpIcon fontSize='inherit' />
-            )}
-          </IconButton>
-          <Drawer
-            variant='persistent'
-            anchor='bottom'
-            open={logsDrawerOpen}
-            sx={{
-              width: drawerWidth,
-              height: drawerWidth,
-
-              flexShrink: 0,
-              ...(logsDrawerOpen ? { display: 'block' } : { display: 'none' }),
-              [`& .MuiDrawer-paper`]: {
-                width: drawerWidth,
-                boxSizing: 'border-box',
-                overflow: 'hidden',
-                height: drawerWidth,
-                backgroundColor: 'grey.800',
-              },
-            }}
-          ></Drawer>
+          {files?.length > 0 ? (
+            <FileList files={files} />
+          ) : (
+            <Box
+              sx={{
+                height: '200px',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant='h6'>No files</Typography>
+            </Box>
+          )}
         </Box>
       </Drawer>
       <Box component='main' sx={{ flexGrow: 1, p: 0, paddingTop: '40px', paddingLeft: '10px' }}>

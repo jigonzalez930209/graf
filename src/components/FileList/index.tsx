@@ -34,7 +34,7 @@ const CurrentListItem = ({ file }: { file: ProcessFile }) => {
         <ListItemButton role={undefined} onClick={() => changeSelectedFile(file.id)} dense>
           <Checkbox
             edge='start'
-            checked={data.find(d => d.id === file.id)?.selected === false ? undefined : true}
+            checked={data.find(d => d.id === file.id)?.selected || false}
             tabIndex={-1}
             disableRipple
             inputProps={{ 'aria-labelledby': labelId }}
