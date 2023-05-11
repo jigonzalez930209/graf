@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from 'react'
 import Box from '@mui/material/Box'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -20,10 +20,12 @@ import ExportModal from '../ExportModal'
 import FileUploader from '../FileUploadWeb'
 import { increaseSize } from '../../utils'
 import { useData } from '../../hooks/useData'
+import ExportModal from '../ExportModal'
 import GraftHandlerPopper from '../GraftHandlerPopper'
 import { GrafContext } from '../../context/GraftContext'
 import { IPlatform, ProcessFile } from '../../interfaces/interfaces'
 import DataSelectorDialog from '../FileContent/DataSelect'
+import FileUploader from '../FileUploadWeb'
 
 import ProjectHandler from './ProjectHandler'
 
