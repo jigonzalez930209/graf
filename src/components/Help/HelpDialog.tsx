@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { styled } from '@mui/styles'
-import MdText from './components/Text'
-import { jelloVertical } from '../../utils'
 import HelpIcon from '@mui/icons-material/Help'
 import CloseIcon from '@mui/icons-material/Close'
-import ListHelpItems from './components/ListHelpItems'
 import { TransitionProps } from '@mui/material/transitions'
 import { Dialog, Divider, AppBar, Toolbar, IconButton, Typography, Slide, Drawer } from '@mui/material'
+
+import { increaseSize } from '../../utils'
+
+import MdText from './components/Text'
+import ListHelpItems from './components/ListHelpItems'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -16,15 +18,6 @@ const Transition = React.forwardRef(function Transition(
 ) {
   return <Slide direction='up' ref={ref} {...props} />
 })
-
-const StyledToolbar = styled(Toolbar)(() => ({
-  'paddingTop': 0,
-  'paddingBottom': 0,
-  // Override media queries injected by theme.mixins.toolbar
-  '@media all': {
-    minHeight: 35,
-  },
-}))
 
 export default function FullScreenDialog() {
   const [open, setOpen] = React.useState(false)
@@ -54,26 +47,26 @@ export default function FullScreenDialog() {
     {
       id: 1,
       title: 'Get Started',
-      content: 'not contente',
+      content: 'not content',
       selected: true,
       file: 'home.md',
     },
     // {
     //   id: 2,
     //   title: 'File Handler',
-    //   content: 'not contente',
+    //   content: 'not content',
     //   selected: false,
     //   file: 'file-handler.md'
     // }, {
     //   id: 3,
     //   title: 'Plot Area',
-    //   content: 'not contente',
+    //   content: 'not content',
     //   selected: false,
     //   file: 'plot-area.md'
     // }, {
     //   id: 4,
     //   title: 'Utilities',
-    //   content: 'not contente',
+    //   content: 'not content',
     //   selected: false,
     //   file: 'utilities.md',
     // }
@@ -85,7 +78,7 @@ export default function FullScreenDialog() {
         <HelpIcon
           sx={{
             '&:hover': {
-              ...jelloVertical,
+              ...increaseSize,
             },
           }}
           fontSize='small'
