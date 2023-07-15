@@ -64,6 +64,6 @@
     "@types/sortablejs": "^1.15.1",
     "@vitejs/plugin-react": "^4.0.0",
     "typescript": "^5.0.4",
-    "vite": "^4.3.4"
+    "vite": "^4.3.9"
   }
 }
