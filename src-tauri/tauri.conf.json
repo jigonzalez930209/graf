@@ -38,12 +38,30 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "",
+      "shortDescription": "shortDescription",
+      "appimage": {
+        "bundleMediaFramework": true
+      },
+      "publisher": "Graf",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
+        "timestampUrl": "",
+        "webviewInstallMode": {
+          "type": "offlineInstaller"
+        },
+        "nsis": {
+          "installMode": "both",
+          "license": "LICENSE",
+          "displayLanguageSelector": true,
+          "languages": [
+            "en-US",
+            "es-ES"
+          ]
+        },
+        "allowDowngrades": true,
+        "wix": {}
       }
     },
     "security": {
