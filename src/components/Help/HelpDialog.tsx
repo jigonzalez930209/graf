@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from 'react'
 import { styled } from '@mui/styles'
 import HelpIcon from '@mui/icons-material/Help'
 import CloseIcon from '@mui/icons-material/Close'
@@ -74,7 +74,7 @@ export default function FullScreenDialog() {
 
   return (
     <>
-      <IconButton size='small' onClick={handleClickOpen} sx={{ ml: 2 }} color={'inherit'}>
+      <IconButton disabled size='small' onClick={handleClickOpen} sx={{ ml: 2 }} color={'inherit'}>
         <HelpIcon
           sx={{
             '&:hover': {

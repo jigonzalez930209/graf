@@ -107,8 +107,41 @@ export const useData = () => {
         ]),
       }))
   }
+  const getImpedanceDataNew = () => {
+    return graftState.files
+      .filter(file => file.selected)
+      .map(file => ({
+        ...file,
+        content: file.content.map(c => ({
+          x: parseFloat(c[2]) * Math.cos((parseFloat(c[3]) * Math.PI) / 180),
+          y: -parseFloat(c[2]) * Math.sin((parseFloat(c[3]) * Math.PI) / 180),
+        })),
+      }))
+  }
 
   const getModuleFase = () => {
+    if (graftState.files === null) {
+      return null
+    }
+    const impedanceData = graftState.files
+      .filter(file => file.selected)
+      .map(file => ({
+        ...file,
+        content: file.content.map((c, i) => ({
+          module: {
+            x: Math.log10(parseFloat(c[1])),
+            y: parseFloat(c[2]),
+          },
+          fase: {
+            x: Math.log10(parseFloat(c[1])),
+            y: -parseFloat(c[3]),
+          },
+        })),
+      }))
+
+    return impedanceData
+  }
+  const getModuleFaseNew = () => {
     if (graftState.files === null) {
       return null
     }
@@ -210,7 +243,19 @@ export const useData = () => {
       .filter(file => file.selected)
       .map(file => ({
         ...file,
-        content: file.content.filter((c, i) => i % stepBetweens === 0).map(c => [c[0], c[1]]),
+        content: file.content.filter((_, i) => i % stepBetweens === 0).map(c => [c[0], c[1]]),
+      }))
+  }
+  const getVCDataNew = (stepBetweens: IStepBetweenPoints) => {
+    if (graftState.files === null) {
+      return []
+    }
+    return graftState.files
+      .map(file => ({ ...file, content: _.dropRight(file.content) }))
+      .filter(file => file.selected)
+      .map(file => ({
+        ...file,
+        content: file.content.filter((_, i) => i % stepBetweens === 0).map(c => [c[0], c[1]]),
       }))
   }
 

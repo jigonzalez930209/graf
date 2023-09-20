@@ -48,8 +48,9 @@ const PlotlyChart = () => {
           setZoomState(null)
         }
       }}
+      useResizeHandler
     />
   )
 }
 
-export default PlotlyChart;
+export default PlotlyChart
