@@ -25,7 +25,8 @@ const GraftHandlerPopper = () => {
     setGraftType,
     setImpedanceType,
     setStepBetweenPoints,
-    graftState: { graftType, fileType, impedanceType, stepBetweenPoints },
+    setLineOrPointWidth,
+    graftState: { graftType, fileType, impedanceType, stepBetweenPoints, lineOrPointWidth },
   } = React.useContext(GrafContext)
 
   const [open, setOpen] = React.useState(false)
@@ -39,8 +40,12 @@ const GraftHandlerPopper = () => {
   const canBeOpen = open && Boolean(anchorEl)
   const id = canBeOpen ? 'popper' : undefined
 
-  const handleSliderChange = (event: Event, newValue: number) => {
+  const handleStepBetweenPointsChange = (event: Event, newValue: number) => {
     setStepBetweenPoints(newValue)
+  }
+
+  const handleLineOrPointWidthChange = (event: Event, newValue: number) => {
+    setLineOrPointWidth(newValue)
   }
 
   return (
@@ -50,6 +55,7 @@ const GraftHandlerPopper = () => {
           aria-describedby={id}
           size='small'
           color='inherit'
+          disabled={fileType === 'csv'}
           sx={{
             ml: 2,
             ...(open && rotate),
@@ -129,7 +135,7 @@ const GraftHandlerPopper = () => {
                       <Grid item xs>
                         <Slider
                           value={typeof stepBetweenPoints === 'number' ? stepBetweenPoints : 1}
-                          onChange={handleSliderChange}
+                          onChange={handleStepBetweenPointsChange}
                           aria-labelledby='input-slider'
                           min={1}
                           max={30}
@@ -145,6 +151,31 @@ const GraftHandlerPopper = () => {
                 </FormControl>
               </Grid>
             )}
+            <Grid item>
+              <FormControl variant='filled' sx={{ m: 1, maxHeight: 20 }}>
+                <Box sx={{ maxWidth: 250 }}>
+                  <Typography id='input-slider' gutterBottom>
+                    Line or points width
+                  </Typography>
+                  <Grid container spacing={2} alignItems='center'>
+                    <Grid item xs>
+                      <Slider
+                        value={typeof lineOrPointWidth === 'number' ? lineOrPointWidth : 1}
+                        onChange={handleLineOrPointWidthChange}
+                        aria-labelledby='input-slider'
+                        min={1}
+                        max={20}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Typography variant='body2' sx={{ width: 42 }}>
+                        {lineOrPointWidth}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </FormControl>
+            </Grid>
           </Grid>
         </Paper>
       </Popover>
