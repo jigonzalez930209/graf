@@ -15,9 +15,6 @@ import PlotlyChart from './GrafContainer'
 import DragDrop from './FileList/drag-drop/DragDrop'
 import { IPlatform } from '../interfaces/interfaces'
 
-import Chart from './GrafContainer/Chart'
-import RChart from './GrafContainer/RChart'
-
 const Index: React.FC = () => {
   const { updateData, data } = useData()
   const { graftState } = React.useContext(GrafContext)
@@ -97,9 +94,7 @@ const Index: React.FC = () => {
         platform={platform}
         content={
           <div>
-            <Chart />
-            {/* <RChart /> */}
-            {/* {graftState?.fileType === 'csv' ? <DragDrop PlotlyChart={<PlotlyChart />} /> : <PlotlyChart />} */}
+            {graftState?.fileType === 'csv' ? <DragDrop PlotlyChart={<PlotlyChart />} /> : <PlotlyChart />}
           </div>
         }
       />
