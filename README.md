@@ -4,7 +4,7 @@ A program designed to help you create and manage your own charts. The program is
 
 ## What is Graf?
 
-<img src='/img/complete-img.png'  width='70%' />
+![complete-img](https://github.com/jigonzalez930209/graf/assets/56707603/80a2bd5a-bce0-4874-a228-7680fde6732b)
 
 Graf is a basic chart handler. it have a tools to read and transform data from a file [teq4, teq4Z, csv] in consecutive versions supported files will be added.
 
