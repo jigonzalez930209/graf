@@ -16,6 +16,7 @@ export interface IGraftState {
   graftType: IGrafType
   impedanceType: IGraftImpedanceType
   stepBetweenPoints: IStepBetweenPoints
+  lineOrPointWidth: number
   drawerOpen: boolean
   csvFileColum: csvFileColum[]
   files: ProcessFile[]
@@ -65,6 +66,7 @@ export type ProcessFile = {
   selected: boolean
   invariableContent?: string[][]
   selectedInvariableContentIndex?: number
+  color: string
   impedance?: {
     V: number
     signalAmplitude: number

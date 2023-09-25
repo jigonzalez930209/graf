@@ -74,6 +74,7 @@ const Index: React.FC = () => {
     } else {
       setPlatform('web')
     }
+    setLoading(false)
   }, [])
 
   return (

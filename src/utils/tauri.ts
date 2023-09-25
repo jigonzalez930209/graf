@@ -7,6 +7,7 @@ import { open, save } from '@tauri-apps/api/dialog'
 import { ProcessFile, IGraftState } from '../interfaces/interfaces'
 
 import { extractSerialPoint, fileType } from './common'
+import { COLORS } from './utils'
 const Utf8ArrayToStr = (array: number[]): string => {
   let out, i, len, c
   let char2, char3
@@ -121,7 +122,7 @@ const readFilesUsingTauriProcess = async () => {
   })
   if (Array.isArray(selected)) {
     const readAll = await readAllFiles(selected)
-    return await readAll.contents
+    return await readAll.contents.map((f, i) => ({ ...f, color: COLORS[i] }))
   } else if (selected === null) {
     console.log('user cancelled the selection')
   } else {

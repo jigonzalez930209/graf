@@ -26,6 +26,7 @@ export const INITIAL_STATE: IGraftState = {
   graftType: 'scatter',
   impedanceType: 'Nyquist',
   stepBetweenPoints: 30,
+  lineOrPointWidth: 3,
   drawerOpen: true,
   csvFileColum: [],
   files: [],
@@ -53,6 +54,7 @@ export const GraftProvider = ({ children, initialState }: props) => {
 
   const setStepBetweenPoints = (step: IStepBetweenPoints) =>
     dispatch({ type: 'setStepBetweenPoints', payload: step })
+  const setLineOrPointWidth = (width: number) => dispatch({ type: 'setLineOrPointWidth', payload: width })
 
   const setDrawerOpen = (open: boolean) => dispatch({ type: 'setDrawerOpen', payload: open })
 
@@ -87,6 +89,7 @@ export const GraftProvider = ({ children, initialState }: props) => {
         updateCSVfileColumn,
         setGraftState,
         setPlatform,
+        setLineOrPointWidth,
       }}
     >
       {children}

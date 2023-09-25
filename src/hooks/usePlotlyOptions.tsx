@@ -10,14 +10,14 @@ import { useData } from './useData'
 const StaticValues = ({ drawerOpen = true, width = 720, height = 540 }) => ({
   autosize: true,
   width: drawerOpen ? width * 0.72 : width * 0.876,
-  height: drawerOpen ? height * 0.80 : height * 0.80,
+  height: drawerOpen ? height * 0.8 : height * 0.8,
   legend: {
     x: 1.1,
     traceorder: 'normal',
     font: {
       family: 'sans-serif',
       size: 12,
-      color: '#000'
+      color: '#000',
     },
   },
   margin: {
@@ -25,23 +25,54 @@ const StaticValues = ({ drawerOpen = true, width = 720, height = 540 }) => ({
     r: 50,
     b: 100,
     t: 50,
-    pad: 4
+    pad: 4,
   },
   title: {
     font: {
-      size: 18
+      size: 18,
     },
     xref: 'paper',
     x: 0.005,
   },
+  transition: {
+    duration: 500,
+    easing: 'cubic-in-out',
+  },
+  frame: {
+    duration: 500,
+  },
 })
 
-const usePlotlyOptions = () => {
+const hovertemplate = (name: string) => `
+  <b>${name}</b><br>
+  <br>
+  %{yaxis.title.text}: %{y}<br>
+  %{xaxis.title.text}: %{x}<br>
+  <extra></extra>
+`
 
-  const { graftState: { fileType, graftType, impedanceType, stepBetweenPoints, drawerOpen, csvFileColum }, } = React.useContext(GrafContext)
+const usePlotlyOptions = () => {
+  const {
+    graftState: {
+      fileType,
+      graftType,
+      impedanceType,
+      stepBetweenPoints,
+      drawerOpen,
+      csvFileColum,
+      lineOrPointWidth,
+    },
+  } = React.useContext(GrafContext)
   const { height, width } = useWindowSize()
 
-  const { getImpedanceData, getModuleFase, getVCData, getZIZRvsFrequency, getCSVData, data: currentData } = useData()
+  const {
+    getImpedanceData,
+    getModuleFase,
+    getVCData,
+    getZIZRvsFrequency,
+    getCSVData,
+    data: currentData,
+  } = useData()
 
   const [layout, setLayout] = React.useState(null)
   const [config, setConfig] = React.useState({ scrollZoom: true })
@@ -51,40 +82,55 @@ const usePlotlyOptions = () => {
     if (currentData?.length > 0) {
       if (fileType === 'teq4Z') {
         if (impedanceType === 'Bode') {
-          setData(_.flatMapDepth(getModuleFase().map((d, i) => ([{
-            x: d.content.map(i => i.fase.x),
-            y: d.content.map(i => i.fase.y),
-            type: 'scatter',
-            mode: graftType === 'line' ? 'lines+markers' : 'markers',
-            name: `fase_${d.name}`,
-            marker: { color: COLORS[i] },
-            line: { color: COLORS[i] },
-            yaxis: 'y2',
-            legendgroup: `${d.name}`,
-          }, {
-            x: d.content.map(i => i.module.x),
-            y: d.content.map(i => i.module.y),
-            type: 'scatter',
-            mode: graftType === 'line' ? 'lines+markers' : 'markers',
-            name: `module_${d.name}`,
-            marker: { color: COLORS[i] },
-            line: { color: COLORS[i] },
-            legendgroup: `${d.name}`,
-          }
-          ])))
+          setData(
+            _.flatMapDepth(
+              getModuleFase().map((d, i) => [
+                {
+                  x: d.content.map(i => i.fase.x),
+                  y: d.content.map(i => i.fase.y),
+                  type: 'scatter',
+                  hovertemplate: hovertemplate(`fase_${d.name}`),
+                  mode: graftType === 'line' ? 'lines+markers' : 'markers',
+                  name: `fase_${d.name}`,
+                  marker: {
+                    color: d.color,
+                    size: graftType === 'line' ? lineOrPointWidth + 3 : lineOrPointWidth,
+                  },
+                  line: { color: d.color, width: lineOrPointWidth },
+                  yaxis: 'y2',
+                  legendgroup: `${d.name}`,
+                },
+                {
+                  x: d.content.map(i => i.module.x),
+                  y: d.content.map(i => i.module.y),
+                  type: 'scatter',
+                  hovertemplate: hovertemplate(`module_${d.name}`),
+                  mode: graftType === 'line' ? 'lines+markers' : 'markers',
+                  name: `module_${d.name}`,
+                  marker: {
+                    color: d.color,
+                    size: graftType === 'line' ? lineOrPointWidth + 3 : lineOrPointWidth,
+                  },
+
+                  line: { color: d.color, width: lineOrPointWidth },
+                  legendgroup: `${d.name}`,
+                },
+              ])
+            )
           )
 
           setLayout({
             autosize: false,
             width: drawerOpen ? width * 0.8 : width * 0.94,
             height: drawerOpen ? height * 0.89 : height * 0.89,
+            hovermode: 'closest',
             legend: {
               x: 1.1,
               traceorder: 'normal',
               font: {
                 family: 'sans-serif',
                 size: 12,
-                color: '#000'
+                color: '#000',
               },
             },
             margin: {
@@ -92,12 +138,12 @@ const usePlotlyOptions = () => {
               r: 50,
               b: 100,
               t: 50,
-              pad: 4
+              pad: 4,
             },
             title: {
               text: impedanceType,
               font: {
-                size: 18
+                size: 18,
               },
               xref: 'paper',
               x: 0.005,
@@ -107,8 +153,8 @@ const usePlotlyOptions = () => {
                 text: 'log10(Frequency(Hz))',
                 font: {
                   size: 18,
-                  color: '#7f7f7f'
-                }
+                  color: '#7f7f7f',
+                },
               },
             },
             yaxis: {
@@ -117,9 +163,9 @@ const usePlotlyOptions = () => {
                 x: 0,
                 font: {
                   size: 18,
-                  color: '#7f7f7f'
-                }
-              }
+                  color: '#7f7f7f',
+                },
+              },
             },
             yaxis2: {
               title: 'Module',
@@ -127,21 +173,27 @@ const usePlotlyOptions = () => {
               side: 'right',
               titlefont: { color: '#7f7f7f', size: 18 },
               tickfont: { color: '#7f7f7f' },
-            }
+            },
           })
-
         } else if (impedanceType === 'Nyquist') {
-          setData(getImpedanceData().map(((d, i) => ({
-            x: d.content.map(i => i[0]),
-            y: d.content.map(i => i[1]),
-            type: 'scatter',
-            mode: graftType === 'line' ? 'lines+markers' : 'markers',
-            name: d.name,
-            marker: { color: COLORS[i] },
-            line: { color: COLORS[i] }
-          }))))
+          setData(
+            getImpedanceData().map(d => ({
+              x: d.content.map(i => i[0]),
+              y: d.content.map(i => i[1]),
+              hovertemplate: hovertemplate(d.name),
+              type: 'scatter',
+              mode: graftType === 'line' ? 'lines+markers' : 'markers',
+              name: d.name,
+              marker: {
+                color: d.color,
+                size: graftType === 'line' ? lineOrPointWidth + 3 : lineOrPointWidth,
+              },
+              line: { color: d.color, width: lineOrPointWidth },
+            }))
+          )
           setLayout({
             autosize: false,
+            hovermode: 'closest',
             width: drawerOpen ? width * 0.8 : width * 0.95,
             height: drawerOpen ? height * 0.89 : height * 0.89,
             margin: {
@@ -149,13 +201,13 @@ const usePlotlyOptions = () => {
               r: 50,
               b: 100,
               t: 50,
-              pad: 4
+              pad: 4,
             },
             title: {
               text: impedanceType,
               font: {
                 // family: 'Courier New, monospace',
-                size: 18
+                size: 18,
               },
               xref: 'paper',
               x: 0.05,
@@ -166,8 +218,8 @@ const usePlotlyOptions = () => {
                 font: {
                   // family: 'Courier New, monospace',
                   size: 18,
-                  color: '#7f7f7f'
-                }
+                  color: '#7f7f7f',
+                },
               },
             },
             yaxis: {
@@ -176,48 +228,57 @@ const usePlotlyOptions = () => {
                 font: {
                   // family: 'Courier New, monospace',
                   size: 18,
-                  color: '#7f7f7f'
-                }
-              }
+                  color: '#7f7f7f',
+                },
+              },
             },
-
           })
-
         } else if (impedanceType === 'ZiZrVsFreq') {
-          setData(_.flatMapDepth(getZIZRvsFrequency().map((d, i) => ([{
-            x: d.content.map(j => j.Zi.x),
-            y: d.content.map(j => j.Zi.y),
-            type: 'scatter',
-            mode: graftType === 'line' ? 'lines+markers' : 'markers',
-            name: `ZI_${d.name}`,
-            marker: { color: COLORS[i] },
-            line: { color: COLORS[i] },
-            yaxis: 'y2',
-            legendgroup: `${d.name}`,
-          }, {
-            x: d.content.map(j => j.Zr.x),
-            y: d.content.map(j => j.Zr.y),
-            type: 'scatter',
-            mode: graftType === 'line' ? 'lines+markers' : 'markers',
-            name: `ZR_${d.name}`,
-            marker: { color: COLORS[i] },
-            line: { color: COLORS[i] },
-            legendgroup: `${d.name}`,
-          }
-          ])))
+          setData(
+            _.flatMapDepth(
+              getZIZRvsFrequency().map(d => [
+                {
+                  x: d.content.map(j => j.Zi.x),
+                  y: d.content.map(j => j.Zi.y),
+                  type: 'scatter',
+                  hovertemplate: hovertemplate(`ZI_${d.name}`),
+                  mode: graftType === 'line' ? 'lines+markers' : 'markers',
+                  name: `ZI_${d.name}`,
+                  marker: {
+                    color: d.color,
+                    size: graftType === 'line' ? lineOrPointWidth + 3 : lineOrPointWidth,
+                  },
+                  line: { color: d.color, width: lineOrPointWidth },
+                  yaxis: 'y2',
+                  legendgroup: `${d.name}`,
+                },
+                {
+                  x: d.content.map(j => j.Zr.x),
+                  y: d.content.map(j => j.Zr.y),
+                  type: 'scatter',
+                  hovertemplate: hovertemplate(`ZR_${d.name}`),
+                  mode: graftType === 'line' ? 'lines+markers' : 'markers',
+                  name: `ZR_${d.name}`,
+                  marker: { color: d.color, size: lineOrPointWidth },
+                  line: { color: d.color, width: lineOrPointWidth },
+                  legendgroup: `${d.name}`,
+                },
+              ])
+            )
           )
 
           setLayout({
             autosize: false,
             width: drawerOpen ? width * 0.8 : width * 0.95,
             height: drawerOpen ? height * 0.89 : height * 0.89,
+            hovermode: 'closest',
             legend: {
               x: 1.1,
               traceorder: 'normal',
               font: {
                 family: 'sans-serif',
                 size: 12,
-                color: '#000'
+                color: '#000',
               },
             },
             margin: {
@@ -225,12 +286,12 @@ const usePlotlyOptions = () => {
               r: 50,
               b: 100,
               t: 50,
-              pad: 4
+              pad: 4,
             },
             title: {
               text: impedanceType,
               font: {
-                size: 18
+                size: 18,
               },
               xref: 'paper',
               x: 0.005,
@@ -240,8 +301,8 @@ const usePlotlyOptions = () => {
                 text: 'log10(Frequency(Hz))',
                 font: {
                   size: 18,
-                  color: '#7f7f7f'
-                }
+                  color: '#7f7f7f',
+                },
               },
             },
             yaxis: {
@@ -250,9 +311,9 @@ const usePlotlyOptions = () => {
                 x: 0,
                 font: {
                   size: 18,
-                  color: '#7f7f7f'
-                }
-              }
+                  color: '#7f7f7f',
+                },
+              },
             },
             yaxis2: {
               title: 'ZI',
@@ -260,44 +321,40 @@ const usePlotlyOptions = () => {
               side: 'right',
               titlefont: { color: '#7f7f7f', size: 18 },
               tickfont: { color: '#7f7f7f' },
-            }
+            },
           })
-
         }
-
       } else if (fileType === 'teq4') {
-        setData(getVCData(stepBetweenPoints).map(((d, i) => ({
-          x: d.content.map(j => j[0]),
-          y: d.content.map(j => j[1]),
-          type: 'scatter',
-          mode: graftType === 'line' ? 'lines' : 'markers',
-          name: d.name,
-          marker: {
-            color: COLORS[i],
-            size: 3
-          },
-          line: {
-            color: COLORS[i],
-            width: 1
-          },
-          color: COLORS[i]
-        }))))
+        setData(
+          getVCData(stepBetweenPoints).map(d => ({
+            x: d.content.map(j => j[0]),
+            y: d.content.map(j => j[1]),
+            type: 'scatter',
+            hovertemplate: hovertemplate(d.name),
+            mode: graftType === 'line' ? 'lines' : 'markers',
+            name: d.name,
+            marker: { color: d.color, size: graftType === 'line' ? 0 : lineOrPointWidth },
+            line: { color: d.color, width: lineOrPointWidth },
+            color: d.color,
+          }))
+        )
 
         setLayout({
           autosize: false,
           width: drawerOpen ? width * 0.8 : width * 0.95,
           height: drawerOpen ? height * 0.89 : height * 0.89,
+          hovermode: 'closest',
           margin: {
             l: 50,
             r: 50,
             b: 100,
             t: 50,
-            pad: 4
+            pad: 4,
           },
           title: {
             text: 'VC',
             font: {
-              size: 18
+              size: 18,
             },
             xref: 'paper',
             x: 0.05,
@@ -307,8 +364,8 @@ const usePlotlyOptions = () => {
               text: 'Voltage (mV)',
               font: {
                 size: 18,
-                color: '#7f7f7f'
-              }
+                color: '#7f7f7f',
+              },
             },
           },
           yaxis: {
@@ -316,60 +373,64 @@ const usePlotlyOptions = () => {
               text: 'Current (mA)',
               font: {
                 size: 18,
-                color: '#7f7f7f'
-              }
-            }
+                color: '#7f7f7f',
+              },
+            },
           },
-
         })
       } else if (fileType === 'csv') {
-
-        let csvData = getCSVData(csvFileColum?.find(csv => csv.selected && (!!currentData.find(d => d.name === csv.fileName)?.name)))
+        let csvData = getCSVData(
+          csvFileColum?.find(csv => csv.selected && !!currentData.find(d => d.name === csv.fileName)?.name)
+        )
 
         if (csvData?.x?.length === 1) {
-          setData(_.flatMapDepth(
-            csvData?.y.map((d, i) => {
-              let values = []
-              values.push(
-                {
+          setData(
+            _.flatMapDepth(
+              csvData?.y.map((d, i) => {
+                let values = []
+                values.push({
                   x: csvData.x[0].content,
                   y: d.content,
                   type: 'scatter',
+                  hovertemplate: hovertemplate(csvData.y[i].name),
                   mode: graftType === 'line' ? 'lines' : 'markers',
                   name: d.name,
                   legendgroup: `${d.name}`,
                   marker: {
                     color: COLORS[i],
-                    size: 3
+                    size: 3,
                   },
                   line: {
                     color: COLORS[i],
-                    width: 1
+                    width: 1,
                   },
-                  color: COLORS[i]
-                }
-              )
-              csvData?.y2[i]?.name && values.push({
-                x: csvData.x[0].content,
-                y: csvData.y2[i].content,
-                type: 'scatter',
-                mode: graftType === 'line' ? 'lines' : 'markers',
-                name: `y2_${csvData?.y2[i]?.name}`,
-                legendgroup: `${csvData.x[0].name}`,
-                yaxis: 'y2',
-                marker: {
                   color: COLORS[i],
-                  size: 3
-                },
-                line: {
-                  color: COLORS[i],
-                  width: 1
-                },
-                color: COLORS[i]
-              })
+                })
+                csvData?.y2[i]?.name &&
+                  values.push({
+                    x: csvData.x[0].content,
+                    y: csvData.y2[i].content,
+                    type: 'scatter',
+                    hovertemplate: hovertemplate(`y2_${csvData.y2[i].name}`),
+                    mode: graftType === 'line' ? 'lines' : 'markers',
+                    name: `y2_${csvData?.y2[i]?.name}`,
+                    legendgroup: `${csvData.x[0].name}`,
+                    yaxis: 'y2',
+                    marker: {
+                      color: COLORS[i],
+                      size: 3,
+                    },
+                    line: {
+                      color: COLORS[i],
+                      width: 1,
+                    },
+                    color: COLORS[i],
+                  })
 
-              return values
-            })))
+                return values
+              })
+            )
+          )
 
           setLayout({
             ...StaticValues({ drawerOpen: drawerOpen, width: width, height: height }),
@@ -378,8 +439,8 @@ const usePlotlyOptions = () => {
                 text: csvData.x[0].name,
                 font: {
                   size: 18,
-                  color: '#7f7f7f'
-                }
+                  color: '#7f7f7f',
+                },
               },
             },
             yaxis: {
@@ -388,9 +449,9 @@ const usePlotlyOptions = () => {
                 x: 0,
                 font: {
                   size: 18,
-                  color: '#7f7f7f'
-                }
-              }
+                  color: '#7f7f7f',
+                },
+              },
             },
             yaxis2: {
               title: csvData.y2[0]?.name,
@@ -398,65 +459,69 @@ const usePlotlyOptions = () => {
               side: 'right',
               titlefont: { color: '#7f7f7f', size: 18 },
               tickfont: { color: '#7f7f7f' },
-            }
+            },
           })
 
           return
         } else if (csvData?.x?.length > 1) {
-
-          setData(_.flatMapDepth(
-            csvData.x.map((d, i) => {
-              let values = []
-              values.push(
-                {
+          setData(
+            _.flatMapDepth(
+              csvData.x.map((d, i) => {
+                let values = []
+                values.push({
                   x: d.content,
                   y: csvData.y[i].content,
                   type: 'scatter',
+                  hovertemplate: hovertemplate('CSV'),
+
                   mode: graftType === 'line' ? 'lines' : 'markers',
                   name: csvData.y[i].name,
                   legendgroup: `${d.name}`,
                   marker: {
                     color: COLORS[i],
-                    size: 3
+                    size: lineOrPointWidth,
                   },
                   line: {
                     color: COLORS[i],
-                    width: 1
+                    width: lineOrPointWidth,
                   },
-                  color: COLORS[i]
-                }
-              )
-              csvData.y2[i]?.name && values.push({
-                x: d.content,
-                y: csvData.y2[i].content,
-                type: 'scatter',
-                mode: graftType === 'line' ? 'lines' : 'markers',
-                name: `y2_${csvData.y2[i].name}`,
-                legendgroup: `${d.name}`,
-                yaxis: 'y2',
-                marker: {
                   color: COLORS[i],
-                  size: 3
-                },
-                line: {
-                  color: COLORS[i],
-                  width: 1
-                },
-                color: COLORS[i]
-              })
+                })
+                csvData.y2[i]?.name &&
+                  values.push({
+                    x: d.content,
+                    y: csvData.y2[i].content,
+                    type: 'scatter',
+                    mode: graftType === 'line' ? 'lines' : 'markers',
+                    name: `y2_${csvData.y2[i].name}`,
+                    legendgroup: `${d.name}`,
+                    yaxis: 'y2',
+                    marker: {
+                      color: COLORS[i],
+                      size: lineOrPointWidth,
+                    },
+                    line: {
+                      color: COLORS[i],
+                      width: lineOrPointWidth,
+                    },
+                    color: COLORS[i],
+                  })
 
-              return values
-            })))
+                return values
+              })
+            )
+          )
 
           setLayout({
             ...StaticValues({ drawerOpen: drawerOpen, width: width, height: height }),
+            hovermode: 'closest',
             xaxis: {
               title: {
                 text: csvData.x[0].name,
                 font: {
                   size: 18,
-                  color: '#7f7f7f'
-                }
+                  color: '#7f7f7f',
+                },
               },
             },
             yaxis: {
@@ -465,9 +530,9 @@ const usePlotlyOptions = () => {
                 x: 0,
                 font: {
                   size: 18,
-                  color: '#7f7f7f'
-                }
-              }
+                  color: '#7f7f7f',
+                },
+              },
             },
             yaxis2: {
               title: csvData.y2[0]?.name,
@@ -475,7 +540,7 @@ const usePlotlyOptions = () => {
               side: 'right',
               titlefont: { color: '#7f7f7f', size: 18 },
               tickfont: { color: '#7f7f7f' },
-            }
+            },
           })
         } else {
           setData([])
@@ -487,9 +552,7 @@ const usePlotlyOptions = () => {
 
       // set config and layout
       if (graftType === 'line') {
-
       } else if (graftType === 'scatter') {
-
       }
     }
 
@@ -498,8 +561,18 @@ const usePlotlyOptions = () => {
       setConfig({ scrollZoom: true })
       setData([])
     }
-
-  }, [currentData, fileType, graftType, impedanceType, width, height, stepBetweenPoints, drawerOpen, csvFileColum])
+  }, [
+    currentData,
+    fileType,
+    graftType,
+    impedanceType,
+    width,
+    height,
+    stepBetweenPoints,
+    drawerOpen,
+    csvFileColum,
+    lineOrPointWidth,
+  ])
 
   return { layout, config, data }
 }

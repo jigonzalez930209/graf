@@ -1,6 +1,7 @@
 import _ from 'lodash'
 
 import { ProcessFile } from '../interfaces/interfaces'
+import { COLORS } from './utils'
 
 const extractSerialPoint = (
   files:
@@ -34,6 +35,7 @@ const extractSerialPoint = (
         id: i,
         type: 'teq4Z',
         name: element.name,
+        color: COLORS[i],
         pointNumber,
         content: dataPoint,
         selected: i === 0,
@@ -53,6 +55,7 @@ const extractSerialPoint = (
 
       processFile.push({
         id: i,
+        color: COLORS[i],
         type: 'teq4',
         name: element.name,
         pointNumber: countX,
@@ -68,6 +71,7 @@ const extractSerialPoint = (
     } else if (fileType(element.name) === 'csv') {
       processFile.push({
         id: i,
+        color: COLORS[i],
         type: 'csv',
         name: element.name,
         content: files[i].content as string[][],

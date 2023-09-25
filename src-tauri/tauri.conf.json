@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "graf",
-    "version": "0.1.5"
+    "version": "0.2.0"
   },
   "tauri": {
     "allowlist": {
@@ -38,12 +38,21 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "",
+      "shortDescription": "A graph visualizer and exports to teq4, teq4Z and csv files. ",
+      "appimage": {
+        "bundleMediaFramework": true
+      },
+      "publisher": "Graf",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
+        "timestampUrl": "",
+        "webviewInstallMode": {
+          "type": "skip"
+        },
+
+        "allowDowngrades": true
       }
     },
     "security": {

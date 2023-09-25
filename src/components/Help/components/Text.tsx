@@ -1,4 +1,3 @@
-
 import * as React from 'react'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -41,7 +40,6 @@ const MdText = ({ style, mdPath }) => {
         <ReactMarkdown
           className='markdown-body'
           remarkPlugins={[remarkGfm, remarkSlug, remarkToc]}
-          rehypePlugins={[rehypeRaw, rehypeHighlight, rehypeKatex]}
           components={{}}
         >
           {text}
